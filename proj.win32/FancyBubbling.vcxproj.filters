@@ -16,6 +16,9 @@
     <Filter Include="src\Utils">
       <UniqueIdentifier>{d2845e55-066a-4715-b5fb-352ee46f5fa9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\HomeScene">
+      <UniqueIdentifier>{ed49ade9-4a54-4841-9d47-83ea6e1780ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -29,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\GameScene\GameSceneController.cpp">
       <Filter>src\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HomeScene\HomeScene.cpp">
+      <Filter>src\HomeScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Utils\Macros.h">
       <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HomeScene\HomeScene.h">
+      <Filter>src\HomeScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
