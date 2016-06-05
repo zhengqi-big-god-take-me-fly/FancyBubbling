@@ -1,4 +1,5 @@
 #include "HomeScene.h"
+#include "../GameScene/GameSceneController.h"
 
 Scene * HomeScene::createScene() {
 	auto scene = Scene::create();
@@ -12,6 +13,9 @@ bool HomeScene::init() {
 		return false;
 	}
 
+	vo = Director::getInstance()->getVisibleOrigin();
+	vs = Director::getInstance()->getVisibleSize();
+
 	// PresentLayer
 	// Contains background, game title, and so on.
 	auto presentLayer = Layer::create();
@@ -20,8 +24,28 @@ bool HomeScene::init() {
 	presentLayer->addChild(background);
 
 	// MenuLayer
-	auto menuLayer = Menu::create();
+	auto startGameButton = MenuItemImage::create("start-game-normal.png", "start-game-pressed.png", CC_CALLBACK_1(HomeScene::onStartGameClick , this));
+    startGameButton->setPosition(vo.x, vo.y);
+	auto aboutGameButton = MenuItemImage::create("about-game-normal.png", "about-game-pressed.png", CC_CALLBACK_1(HomeScene::onAboutGameClick, this));
+	auto exitGameButton = MenuItemImage::create("exit-game-normal.png", "exit-game-pressed.png", CC_CALLBACK_1(HomeScene::onExitGameClick, this));
+    exitGameButton->setPosition(vo.x + vs.width, vo.y);
+	auto menuLayer = Menu::create(startGameButton, aboutGameButton, exitGameButton, nullptr);
 	addChild(menuLayer, 1);
 
 	return true;
+}
+
+void HomeScene::onStartGameClick(Ref * sender) {
+    auto scene = GameSceneController::createScene();
+    Director::getInstance()->pushScene(scene);
+}
+
+void HomeScene::onAboutGameClick(Ref * sender) {}
+
+void HomeScene::onExitGameClick(Ref * sender) {
+	Director::getInstance()->end();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	exit(0);
+#endif
 }

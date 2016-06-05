@@ -10,6 +10,14 @@ public:
 	static Scene * createScene();
 	CREATE_FUNC(HomeScene);
 	virtual bool init();
+
+private:
+	void onStartGameClick(Ref * sender);
+	void onAboutGameClick(Ref * sender);
+	void onExitGameClick(Ref * sender);
+
+	Size vs;
+	Vec2 vo;
 };
 
 #endif // !__HOME_SCENE_H__
