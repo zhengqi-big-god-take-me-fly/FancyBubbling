@@ -33,6 +33,7 @@
     <ClCompile Include="..\Classes\HomeScene\HomeScene.cpp">
       <Filter>src\HomeScene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameScene\GameSceneView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -55,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\HomeScene\HomeScene.h">
       <Filter>src\HomeScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene\GameSceneModel.h">
+      <Filter>src\GameScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

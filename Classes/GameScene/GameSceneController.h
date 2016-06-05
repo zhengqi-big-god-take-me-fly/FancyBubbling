@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 #include "GameSceneControllerDelegate.h"
-#include "GameSceneView.h"
+#include "GameSceneModel.h"
 
 USING_NS_CC;
 
@@ -12,11 +12,13 @@ public:
 	// Instantialize a Controller as Scene, used by Director.
 	static Scene * createScene();
 	// Custom create function.
-	static GameSceneController * create(GameSceneView * _view = nullptr);
-	virtual bool init(GameSceneView * _view);
-	// TODO
+	//static GameSceneController * create(GameSceneView * _view = nullptr);
+    CREATE_FUNC(GameSceneController);
+	virtual bool init();
+    virtual void onExit();
 private:
 	GameSceneView * view;
+    GameSceneModel * model;
 };
 
 #endif // !__GAME_SCENE_CONTROLLER_H__

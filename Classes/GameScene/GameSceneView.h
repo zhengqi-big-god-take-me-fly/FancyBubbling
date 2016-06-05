@@ -11,7 +11,10 @@ Node to hold all Layers and prepare callbacks.
 */
 class GameSceneView : public Node {
 public:
-	CREATE_FUNC(GameSceneView);
+    static GameSceneView * create(GameSceneControllerDelegate * _controller);
+    virtual bool init(GameSceneControllerDelegate * _controller);
+private:
+    GameSceneControllerDelegate * controller;
 };
 
 #endif // !__GAME_SCENE_VIEW_H__
