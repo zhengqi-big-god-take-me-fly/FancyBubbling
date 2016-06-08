@@ -33,7 +33,9 @@
     <ClCompile Include="..\Classes\HomeScene\HomeScene.cpp">
       <Filter>src\HomeScene</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GameScene\GameSceneView.cpp" />
+    <ClCompile Include="..\Classes\GameScene\GameSceneView.cpp">
+      <Filter>src\GameScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

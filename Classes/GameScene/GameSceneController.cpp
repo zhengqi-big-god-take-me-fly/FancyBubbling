@@ -25,10 +25,44 @@ bool GameSceneController::init() {
     // Controller retains model instance.
     model->retain();
 
+    gameReady();
+
 	return true;
 }
 
 void GameSceneController::onExit() {
     model->release();
     Scene::onExit();
+}
+
+void GameSceneController::gameReady() {
+    // TODO
+    // Load ui
+    view->initUIBackground();
+
+    // Load map
+
+
+    // Add players
+
+
+    // Load hud
+
+
+    // Countdown
+    countdown = 4;
+    schedule(schedule_selector(GameSceneController::onCountdown), 1, 4, 1.0f / 60);
+}
+
+void GameSceneController::onCountdown(float delta) {
+    --countdown;
+    if (countdown <= 0) {
+        // TODO: Interface Request
+        // void notifyReady(const std::string &);
+        //view->notifyReady("START!");
+        unschedule(schedule_selector(GameSceneController::onCountdown));
+    } else {
+        // TODO: Interface Request
+        //view->notifyReady(std::to_string(countdown));
+    }
 }

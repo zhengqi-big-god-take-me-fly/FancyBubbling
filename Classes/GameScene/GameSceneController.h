@@ -17,8 +17,13 @@ public:
 	virtual bool init();
     virtual void onExit();
 private:
+    void gameReady();
+    void onCountdown(float delta);
+
 	GameSceneView * view;
     GameSceneModel * model;
+
+    int countdown;
 };
 
 #endif // !__GAME_SCENE_CONTROLLER_H__
