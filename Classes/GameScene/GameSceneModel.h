@@ -10,7 +10,7 @@ public:
     // Notes:
     // Rewrite this method if you need some parameters to init.
     CREATE_FUNC(GameSceneModel);
-    virtual bool init();
+    virtual bool init() { return true; }
 private:
 };
 
