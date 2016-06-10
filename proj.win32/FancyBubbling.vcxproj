@@ -147,17 +147,26 @@ xcopy /Y /Q "$(COCOS_X_ROOT)\cocos2d-x-3.10\prebuilt\win32\*.*" "$(OutDir)"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\GameScene\BlockModel.cpp" />
+    <ClCompile Include="..\Classes\GameScene\BubbleModel.cpp" />
     <ClCompile Include="..\Classes\GameScene\GameSceneController.cpp" />
+    <ClCompile Include="..\Classes\GameScene\GameSceneModel.cpp" />
     <ClCompile Include="..\Classes\GameScene\GameSceneView.cpp" />
+    <ClCompile Include="..\Classes\GameScene\ItemModel.cpp" />
+    <ClCompile Include="..\Classes\GameScene\PlayerModel.cpp" />
     <ClCompile Include="..\Classes\HomeScene\HomeScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\GameScene\BlockModel.h" />
+    <ClInclude Include="..\Classes\GameScene\BubbleModel.h" />
     <ClInclude Include="..\Classes\GameScene\GameSceneController.h" />
     <ClInclude Include="..\Classes\GameScene\GameSceneControllerDelegate.h" />
     <ClInclude Include="..\Classes\GameScene\GameSceneModel.h" />
     <ClInclude Include="..\Classes\GameScene\GameSceneView.h" />
+    <ClInclude Include="..\Classes\GameScene\ItemModel.h" />
+    <ClInclude Include="..\Classes\GameScene\PlayerModel.h" />
     <ClInclude Include="..\Classes\HomeScene\HomeScene.h" />
     <ClInclude Include="..\Classes\Utils\Macros.h" />
     <ClInclude Include="main.h" />
