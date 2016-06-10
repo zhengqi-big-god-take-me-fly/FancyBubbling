@@ -117,6 +117,7 @@ bool GameSceneController::playerPresolve(int p, PhysicsBody * playerBody, Physic
     //default:
     //    return false;
     //}
+    return false;
 }
 
 void GameSceneController::playerSeparate(int p, PhysicsBody * playerBody) {
