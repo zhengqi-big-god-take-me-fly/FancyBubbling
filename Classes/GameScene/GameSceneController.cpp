@@ -1,5 +1,4 @@
 #include "GameSceneController.h"
-#include "GameSceneView.h"
 
 Scene * GameSceneController::createScene() {
 	return GameSceneController::create();
@@ -19,8 +18,8 @@ bool GameSceneController::init() {
     keyboardListener->onKeyPressed = CC_CALLBACK_2(GameSceneController::keyboardOnKeyPressed, this);
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameSceneController::keyboardOnKeyReleased, this);
     _eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, -1);
-    auto countdownListener = EventListenerCustom::create("Countdown", CC_CALLBACK_1(GameSceneController::countdownOnChanged, this));
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(countdownListener, this);
+    //auto countdownListener = EventListenerCustom::create("Countdown", CC_CALLBACK_1(GameSceneController::countdownOnChanged, this));
+    //_eventDispatcher->addEventListenerWithSceneGraphPriority(countdownListener, this);
     auto spritePhysicsListener = EventListenerPhysicsContact::create();
     spritePhysicsListener->onContactBegin = CC_CALLBACK_1(GameSceneController::spriteOnContactBegin, this);
     spritePhysicsListener->onContactPreSolve = CC_CALLBACK_2(GameSceneController::spriteOnContactPreSolve, this);
@@ -85,33 +84,42 @@ void GameSceneController::gameReady() {
     //view->addMap("some-map.tmx");
 
     // Add players
-    //model->addPlayer(0);
-    //model->addPlayer(1);
+    model->players.push_back(PlayerModel::create());
+    model->players.push_back(PlayerModel::create());
     //view->addPlayer(0);
     //view->addPlayer(1);
 
     // Load hud
     //view->setAvatar(0, "player0.png");
     //view->setAvatar(1, "player1.png");
-    //view->setHP(0, model->getPlayer(0)->getHP(), model->getPlayer(0)->getMaxHP());
-    //view->setHP(1, model->getPlayer(1)->getHP(), model->getPlayer(1)->getMaxHP());
+    //view->setHP(0, model->players[0]->getHP(), model->players[0]->getMaxHP());
+    //view->setHP(1, model->players[1]->getHP(), model->players[1]->getMaxHP());
     //view->setPropsCount(0, 0, 0);
     //view->setPropsCount(0, 1, 0);
     //view->setPropsCount(1, 0, 0);
     //view->setPropsCount(1, 1, 0);
+
+    // Start countdown
+    model->setTime(3);
+    model->setStatus(GameSceneModel::Status::ready);
+    schedule(schedule_selector(GameSceneController::countdown, this), 1, 4, 1.0f / 60);
+}
+
+void GameSceneController::gameStart() {
+    model->setStatus(GameSceneModel::Status::running);
 }
 
 bool GameSceneController::playerPresolve(int p, PhysicsBody * playerBody, PhysicsContact & contact) {
-    //switch (model->getPlayerModel(p)->getMovingdirection()) {
-    //case PlayerModel::MovingDirection::Up:
-    //case PlayerModel::MovingDirection::Down:
+    //switch (model->getPlayerModel(p)->getDirection()) {
+    //case PlayerModel::Direction::up:
+    //case PlayerModel::Direction::down:
     //    playerBody->setVelocity(Vec2(playerBody->getVelocity().x, model->getPlayerModel(p)->getVelocity().y));
     //    return true;
-    //case PlayerModel::MovingDirection::Left:
-    //case PlayerModel::MovingDirection::Right:
+    //case PlayerModel::Direction::left:
+    //case PlayerModel::Direction::right:
     //    playerBody->setVelocity(Vec2(model->getPlayerModel(p)->getVelocity().x, playerBody->getVelocity().y));
     //    return true;
-    //case PlayerModel::MovingDirection::None:
+    //case PlayerModel::Direction::still:
     //    playerBody->setVelocity(Vec2::ZERO);
     //    return false;
     //default:
@@ -124,27 +132,42 @@ void GameSceneController::playerSeparate(int p, PhysicsBody * playerBody) {
     //playerBody->setVelocity(model->getPlayerModel(p)->getVelocity());
 }
 
-//void GameSceneController::changePlayerDirection(int p, PlayerModel::MovingDirection d) {
-//    model->getPlayerModel(p)->setDirection(d);
-//    view->setPlayerVelocity(p, model->getPlayerModel(p)->getVelocity());
-//}
+void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
+    model->players[p]->setDirection(d);
+    //view->setPlayerVelocity(p, model->players[p]->getVelocity());
+}
 
 //GameSceneController::CollisionType GameSceneController::getCollisionType(int tag1, int tag2) {}
 
+void GameSceneController::countdown(float delta) {
+    int time = model->getTime();
+    if (time <= 0) {
+        // TODO: Interface Request
+        // void notifyReady(const std::string &);
+        //view->notifyReady("START!");
+        unschedule(schedule_selector(GameSceneController::countdown));
+        gameStart();
+    } else {
+        // TODO: Interface Request
+        //view->notifyReady(std::to_string(time));
+        model->setTime(time - 1);
+    }
+}
+
 void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Event * e) {
     switch (code) {
-    // Player1
+    // Player0
     case EventKeyboard::KeyCode::KEY_E:
-        //changePlayerDirection(0, PlayerModel::MovingDirection::Up);
+        changePlayerDirection(0, PlayerModel::Direction::up);
         break;
     case EventKeyboard::KeyCode::KEY_D:
-        //changePlayerDirection(0, PlayerModel::MovingDirection::Down);
+        changePlayerDirection(0, PlayerModel::Direction::down);
         break;
     case EventKeyboard::KeyCode::KEY_S:
-        //changePlayerDirection(0, PlayerModel::MovingDirection::Left);
+        changePlayerDirection(0, PlayerModel::Direction::left);
         break;
     case EventKeyboard::KeyCode::KEY_F:
-        //changePlayerDirection(0, PlayerModel::MovingDirection::Right);
+        changePlayerDirection(0, PlayerModel::Direction::right);
         break;
     case EventKeyboard::KeyCode::KEY_LEFT_SHIFT:
         break;
@@ -152,22 +175,22 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         break;
     case EventKeyboard::KeyCode::KEY_R:
         break;
-    // Player2
+    // Player1
     case EventKeyboard::KeyCode::KEY_I:
     case EventKeyboard::KeyCode::KEY_UP_ARROW:
-        //changePlayerDirection(1, PlayerModel::MovingDirection::Up);
+        changePlayerDirection(1, PlayerModel::Direction::up);
         break;
     case EventKeyboard::KeyCode::KEY_K:
     case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-        //changePlayerDirection(1, PlayerModel::MovingDirection::Down);
+        changePlayerDirection(1, PlayerModel::Direction::down);
         break;
     case EventKeyboard::KeyCode::KEY_J:
     case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        //changePlayerDirection(1, PlayerModel::MovingDirection::Left);
+        changePlayerDirection(1, PlayerModel::Direction::left);
         break;
     case EventKeyboard::KeyCode::KEY_L:
     case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-        //changePlayerDirection(1, PlayerModel::MovingDirection::Right);
+        changePlayerDirection(1, PlayerModel::Direction::right);
         break;
     case EventKeyboard::KeyCode::KEY_RIGHT_SHIFT:
     case EventKeyboard::KeyCode::KEY_0:
@@ -188,20 +211,20 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
     switch (code) {
         // Player0
     case EventKeyboard::KeyCode::KEY_E:
-        //if (model->getPlayer(0)->getMovingDirection() == PlayerModel::MovingDirection::Up)
-        //    changePlayerDirection(0, PlayerModel::MovingDirection::None);
+        if (model->players[0]->getDirection() == PlayerModel::Direction::up)
+            changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_D:
-        //if (model->getPlayer(0)->getMovingDirection() == PlayerModel::MovingDirection::Down)
-        //    changePlayerDirection(0, PlayerModel::MovingDirection::None);
+        if (model->players[0]->getDirection() == PlayerModel::Direction::down)
+            changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_S:
-        //if (model->getPlayer(0)->getMovingDirection() == PlayerModel::MovingDirection::Left)
-        //    changePlayerDirection(0, PlayerModel::MovingDirection::None);
+        if (model->players[0]->getDirection() == PlayerModel::Direction::left)
+            changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_F:
-        //if (model->getPlayer(0)->getMovingDirection() == PlayerModel::MovingDirection::Right)
-        //    changePlayerDirection(0, PlayerModel::MovingDirection::None);
+        if (model->players[0]->getDirection() == PlayerModel::Direction::right)
+            changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_LEFT_SHIFT:
         break;
@@ -212,23 +235,23 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
         // Player1
     case EventKeyboard::KeyCode::KEY_I:
     case EventKeyboard::KeyCode::KEY_UP_ARROW:
-        //if (model->getPlayer(1)->getMovingDirection() == PlayerModel::MovingDirection::Up)
-        //    changePlayerDirection(1, PlayerModel::MovingDirection::None);
+        if (model->players[1]->getDirection() == PlayerModel::Direction::up)
+            changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_K:
     case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-        //if (model->getPlayer(1)->getMovingDirection() == PlayerModel::MovingDirection::Down)
-        //    changePlayerDirection(1, PlayerModel::MovingDirection::None);
+        if (model->players[1]->getDirection() == PlayerModel::Direction::down)
+            changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_J:
     case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        //if (model->getPlayer(1)->getMovingDirection() == PlayerModel::MovingDirection::Left)
-        //    changePlayerDirection(1, PlayerModel::MovingDirection::None);
+        if (model->players[1]->getDirection() == PlayerModel::Direction::left)
+            changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_L:
     case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-        //if (model->getPlayer(1)->getMovingDirection() == PlayerModel::MovingDirection::Right)
-        //    changePlayerDirection(1, PlayerModel::MovingDirection::None);
+        if (model->players[1]->getDirection() == PlayerModel::Direction::right)
+            changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_RIGHT_SHIFT:
     case EventKeyboard::KeyCode::KEY_0:
@@ -244,21 +267,3 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
         break;
     }
 }
-
-void GameSceneController::countdownOnChanged(EventCustom * e) {
-    // TODO: Get countdown from e
-    int countdown = 0;
-    if (countdown <= 0) {
-        // TODO: Interface Request
-        // void notifyReady(const std::string &);
-        //view->notifyReady("START!");
-        //unschedule(schedule_selector(GameSceneController::onCountdown));
-    } else {
-        // TODO: Interface Request
-        //view->notifyReady(std::to_string(countdown));
-    }
-}
-
-//void GameSceneController::playingMovingOnDirectionChanged(EventCustom * e) {
-//    // TODO: Get player and direction from e.
-//}
