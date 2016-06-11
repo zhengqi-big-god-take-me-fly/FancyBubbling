@@ -13,17 +13,20 @@ public:
     const static int TAG_PLAYER = 1;
     enum CollisionType { PlayerWall, PlayerBubble, PlayerBox };
 	static Scene * createScene();       // Instantialize a Controller as Scene, used by Director.
-    CREATE_FUNC(GameSceneController)
+    //CREATE_FUNC(GameSceneController)
+    static GameSceneController * createWithPhysics();
 	virtual bool init();
     virtual void onExit();
     virtual void update(float delta);
 private:
+    // Helper functions
     void gameReady();
     void gameStart();
     bool playerPresolve(int p, PhysicsBody * playerBody, PhysicsContact & contact);
     void playerSeparate(int p, PhysicsBody * playerBody);
     void changePlayerDirection(int p, PlayerModel::Direction d);
-    //CollisionType getCollisionType(int tag1, int tag2);
+    void placeBubble(int p);
+    void useProps(int p, int i);
     
     // Schedulers
     void countdown(float delta);

@@ -1,7 +1,18 @@
 #include "GameSceneController.h"
 
 Scene * GameSceneController::createScene() {
-	return GameSceneController::create();
+	return GameSceneController::createWithPhysics();
+}
+
+GameSceneController * GameSceneController::createWithPhysics() {
+    GameSceneController *ret = new (std::nothrow) GameSceneController();
+    if (ret && ret->initWithPhysics()) {
+        ret->autorelease();
+        return ret;
+    } else {
+        CC_SAFE_DELETE(ret);
+        return nullptr;
+    }
 }
 
 bool GameSceneController::init() {
@@ -18,8 +29,6 @@ bool GameSceneController::init() {
     keyboardListener->onKeyPressed = CC_CALLBACK_2(GameSceneController::keyboardOnKeyPressed, this);
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameSceneController::keyboardOnKeyReleased, this);
     _eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, -1);
-    //auto countdownListener = EventListenerCustom::create("Countdown", CC_CALLBACK_1(GameSceneController::countdownOnChanged, this));
-    //_eventDispatcher->addEventListenerWithSceneGraphPriority(countdownListener, this);
     auto spritePhysicsListener = EventListenerPhysicsContact::create();
     spritePhysicsListener->onContactBegin = CC_CALLBACK_1(GameSceneController::spriteOnContactBegin, this);
     spritePhysicsListener->onContactPreSolve = CC_CALLBACK_2(GameSceneController::spriteOnContactPreSolve, this);
@@ -34,16 +43,28 @@ bool GameSceneController::init() {
 }
 
 void GameSceneController::onExit() {
+    unscheduleUpdate();
     model->release();
     Scene::onExit();
 }
 
 void GameSceneController::update(float delta) {
-    //auto player0Grid = model->getMapModel()->coordinateToGrid(view->getPlayerPosition(0));
-    //auto player1Grid = model->getMapModel()->coordinateToGrid(view->getPlayerPosition(1));
 }
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
+    auto sa = contact.getShapeA()->getBody()->getNode();
+    auto sb = contact.getShapeB()->getBody()->getNode();
+    //if ((view->isPlayer(sa) && view->isPlayer(sb)) || (view->isWave(sa) && view->isWave(sb))) {
+    //    return false;
+    //} else if (view->isWave(sa) && view->isPlayer(sb)) {
+    //    // TODO: Wave a hit Player b
+    //    return false;
+    //} else if (view->isWave(sb) && view->isPlayer(sa)) {
+    //    // TODO: Wave b hit Player a
+    //    return false;
+    //} else {
+    //    return false;
+    //}
     return false;
 }
 
@@ -59,6 +80,24 @@ bool GameSceneController::spriteOnContactPreSolve(PhysicsContact & contact, Phys
     //} else {
     //    // TODO: Bubble explosion
     //}
+    auto sa = contact.getShapeA()->getBody()->getNode();
+    auto sb = contact.getShapeB()->getBody()->getNode();
+    //if (view->isPlayer(sa) || view->isPlayer(sb)) {
+    //    Vec2 g;
+    //    int p;
+    //    if (view->isPlayer(sa)) {
+    //        g = view->getGridPosition(sb);
+    //        p = 0;
+    //    } else {
+    //        g = view->getGridPosition(sa);
+    //        p = 1;
+    //    }
+    //    auto block = model->map[(int)g.x][(int)g.y];
+    //    if (block != nullptr && !block->isBreakable()) {
+    //        playerPresolve(p, sa->getPhysicsBody(), contact);
+    //        return true;
+    //    }
+    //} 
     return true;
 }
 
@@ -80,8 +119,8 @@ void GameSceneController::gameReady() {
     //view->loadUI();
 
     // Load map
-    //model->prepareMap("some-map.mdj");
-    //view->addMap("some-map.tmx");
+    //model->prepareMap("garden.json");
+    //view->addMap("garden.tmx");
 
     // Add players
     model->players.push_back(PlayerModel::create());
@@ -110,26 +149,25 @@ void GameSceneController::gameStart() {
 }
 
 bool GameSceneController::playerPresolve(int p, PhysicsBody * playerBody, PhysicsContact & contact) {
-    //switch (model->getPlayerModel(p)->getDirection()) {
-    //case PlayerModel::Direction::up:
-    //case PlayerModel::Direction::down:
-    //    playerBody->setVelocity(Vec2(playerBody->getVelocity().x, model->getPlayerModel(p)->getVelocity().y));
-    //    return true;
-    //case PlayerModel::Direction::left:
-    //case PlayerModel::Direction::right:
-    //    playerBody->setVelocity(Vec2(model->getPlayerModel(p)->getVelocity().x, playerBody->getVelocity().y));
-    //    return true;
-    //case PlayerModel::Direction::still:
-    //    playerBody->setVelocity(Vec2::ZERO);
-    //    return false;
-    //default:
-    //    return false;
-    //}
-    return false;
+    switch (model->players[p]->getDirection()) {
+    case PlayerModel::Direction::up:
+    case PlayerModel::Direction::down:
+        playerBody->setVelocity(Vec2(playerBody->getVelocity().x, model->players[p]->getVelocity().y));
+        return true;
+    case PlayerModel::Direction::left:
+    case PlayerModel::Direction::right:
+        playerBody->setVelocity(Vec2(model->players[p]->getVelocity().x, playerBody->getVelocity().y));
+        return true;
+    case PlayerModel::Direction::still:
+        playerBody->setVelocity(Vec2::ZERO);
+        return false;
+    default:
+        return false;
+    }
 }
 
 void GameSceneController::playerSeparate(int p, PhysicsBody * playerBody) {
-    //playerBody->setVelocity(model->getPlayerModel(p)->getVelocity());
+    playerBody->setVelocity(model->players[p]->getVelocity());
 }
 
 void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
@@ -137,7 +175,9 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
     //view->setPlayerVelocity(p, model->players[p]->getVelocity());
 }
 
-//GameSceneController::CollisionType GameSceneController::getCollisionType(int tag1, int tag2) {}
+void GameSceneController::placeBubble(int p) {}
+
+void GameSceneController::useProps(int p, int i) {}
 
 void GameSceneController::countdown(float delta) {
     int time = model->getTime();
@@ -170,10 +210,13 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         changePlayerDirection(0, PlayerModel::Direction::right);
         break;
     case EventKeyboard::KeyCode::KEY_LEFT_SHIFT:
+        placeBubble(0);
         break;
     case EventKeyboard::KeyCode::KEY_Q:
+        useProps(0, 0);
         break;
     case EventKeyboard::KeyCode::KEY_R:
+        useProps(0, 1);
         break;
     // Player1
     case EventKeyboard::KeyCode::KEY_I:
@@ -194,12 +237,15 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         break;
     case EventKeyboard::KeyCode::KEY_RIGHT_SHIFT:
     case EventKeyboard::KeyCode::KEY_0:
+        placeBubble(1);
         break;
     case EventKeyboard::KeyCode::KEY_U:
     case EventKeyboard::KeyCode::KEY_1:
+        useProps(1, 0);
         break;
     case EventKeyboard::KeyCode::KEY_O:
     case EventKeyboard::KeyCode::KEY_2:
+        useProps(1, 1);
         break;
     // Default
     default:
@@ -209,7 +255,7 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
 
 void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Event * e) {
     switch (code) {
-        // Player0
+    // Player0
     case EventKeyboard::KeyCode::KEY_E:
         if (model->players[0]->getDirection() == PlayerModel::Direction::up)
             changePlayerDirection(0, PlayerModel::Direction::still);
@@ -226,13 +272,7 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
         if (model->players[0]->getDirection() == PlayerModel::Direction::right)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
-    case EventKeyboard::KeyCode::KEY_LEFT_SHIFT:
-        break;
-    case EventKeyboard::KeyCode::KEY_Q:
-        break;
-    case EventKeyboard::KeyCode::KEY_R:
-        break;
-        // Player1
+    // Player1
     case EventKeyboard::KeyCode::KEY_I:
     case EventKeyboard::KeyCode::KEY_UP_ARROW:
         if (model->players[1]->getDirection() == PlayerModel::Direction::up)
@@ -253,16 +293,7 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
         if (model->players[1]->getDirection() == PlayerModel::Direction::right)
             changePlayerDirection(1, PlayerModel::Direction::still);
         break;
-    case EventKeyboard::KeyCode::KEY_RIGHT_SHIFT:
-    case EventKeyboard::KeyCode::KEY_0:
-        break;
-    case EventKeyboard::KeyCode::KEY_U:
-    case EventKeyboard::KeyCode::KEY_1:
-        break;
-    case EventKeyboard::KeyCode::KEY_O:
-    case EventKeyboard::KeyCode::KEY_2:
-        break;
-        // Default
+    // Default
     default:
         break;
     }
