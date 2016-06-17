@@ -1,4 +1,5 @@
 #include "GameSceneController.h"
+#include "BubbleModel.h"
 
 Scene * GameSceneController::createScene() {
 	return GameSceneController::createWithPhysics();
@@ -52,7 +53,19 @@ void GameSceneController::update(float delta) {
 }
 
 void GameSceneController::bubbleExplode(Node * node) {
-    // TODO: Bubble explode
+    //auto gp = view->getGridPosition(node);
+    //auto range = ((BubbleModel *)getBlock(gp))->getBlowRange();
+    //Vec2 md[4] = { Vec2(0, -1), Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0) };  // 4 directions: Up, Right, Down, Left
+    //for (int d = 0; d < 3; ++d) {
+    //    auto rp = gp;
+    //    for (int r = 0; r < range; ++r) {
+    //        if (rp.x <= 0 || rp.x >= 14 || rp.y <= 0 || rp.y >= 12) break;
+    //        if (getBlock(rp + md[d])->isBlockWave()) break;
+    //        rp += md[d];
+    //    }
+    //    view->addWave(gp, rp);
+    //}
+    //view->removeNode(node);
 }
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
@@ -115,6 +128,10 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
     if (isPlayerAndBody(gra, grb)) {
         playerSeparate(gra == GROUP_PLAYER ? contact.getShapeA()->getBody()->getNode() : contact.getShapeB()->getBody()->getNode());
     }
+}
+
+BlockModel * GameSceneController::getBlock(Vec2 v) {
+    return model->map[(int)v.x][(int)v.y];
 }
 
 void GameSceneController::gameReady() {
@@ -189,11 +206,22 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
 }
 
 void GameSceneController::placeBubble(int p) {
-    // TODO: Place bubble
+    //if (model->players[p]->items[KEY_BUBBLE] > 0) {
+    //    --model->players[p]->items[KEY_BUBBLE];
+    //    auto pp = view->getPlayerGridPosition(p);
+    //    auto bm = BubbleModel::create();
+    //    bm->setBlowDelay(3);
+    //    bm->setBlowRange(model->players[p]->getBlowRange());
+    //    model->map[(int)pp.x][(int)pp.y] = bm;
+    //    view->addBubble(pp, CC_CALLBACK_1(GameSceneControllerDelegate::bubbleExplode, this));
+    //}
 }
 
-void GameSceneController::useProps(int p, int i) {
-    // TODO: Use props
+void GameSceneController::useProps(int p, const char * k) {
+    // TODO: Use props (TBD)
+    if (model->players[p]->items[k] > 0) {
+        --model->players[p]->items[k];
+    }
 }
 
 void GameSceneController::playerBeAttacked(int p) {
@@ -242,10 +270,10 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         placeBubble(0);
         break;
     case EventKeyboard::KeyCode::KEY_Q:
-        useProps(0, 0);
+        useProps(0, KEY_MEDICINE);
         break;
     case EventKeyboard::KeyCode::KEY_R:
-        useProps(0, 1);
+        useProps(0, KEY_SHIELD);
         break;
     // Player1
     case EventKeyboard::KeyCode::KEY_I:
@@ -270,11 +298,11 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         break;
     case EventKeyboard::KeyCode::KEY_U:
     case EventKeyboard::KeyCode::KEY_1:
-        useProps(1, 0);
+        useProps(1, KEY_MEDICINE);
         break;
     case EventKeyboard::KeyCode::KEY_O:
     case EventKeyboard::KeyCode::KEY_2:
-        useProps(1, 1);
+        useProps(1, KEY_SHIELD);
         break;
     // Default
     default:

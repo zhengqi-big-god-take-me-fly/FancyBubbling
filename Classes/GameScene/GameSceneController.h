@@ -8,10 +8,12 @@
 
 USING_NS_CC;
 
+#define KEY_MEDICINE "MEDICINE"
+#define KEY_SHIELD "SHIELD"
+
 class GameSceneController : public Scene, public GameSceneControllerDelegate {
 public:
-    //const static int TAG_PLAYER = 1;
-    //enum CollisionType { PlayerWall, PlayerBubble, PlayerBox };
+    // Constants
     const static int GROUP_PLAYER = 1;
     const static int GROUP_BLOCK = 2;
     const static int GROUP_WALL = 3;
@@ -27,6 +29,8 @@ public:
     // Inherited from GameSceneControllerDelegate
     virtual void bubbleExplode(Node * node);
 private:
+    // Should be in Model
+    BlockModel * getBlock(Vec2 v);
     // Helper functions
     void gameReady();
     void gameStart();
@@ -35,7 +39,7 @@ private:
     bool isPlayerAndBody(int a, int b);
     void changePlayerDirection(int p, PlayerModel::Direction d);
     void placeBubble(int p);
-    void useProps(int p, int i);
+    void useProps(int p, const char * k);
     void playerBeAttacked(int p);
     void playerGetProps(int p, Node * pr);
     void blockBeAttacked(Node * b);
