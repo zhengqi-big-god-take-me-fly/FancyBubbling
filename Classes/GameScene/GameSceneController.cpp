@@ -51,66 +51,68 @@ void GameSceneController::onExit() {
 void GameSceneController::update(float delta) {
 }
 
+void GameSceneController::bubbleExplode(Node * node) {}
+
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
     auto sa = contact.getShapeA()->getBody()->getNode();
     auto sb = contact.getShapeB()->getBody()->getNode();
-    //if ((view->isPlayer(sa) && view->isPlayer(sb)) || (view->isWave(sa) && view->isWave(sb))) {
-    //    return false;
-    //} else if (view->isWave(sa) && view->isPlayer(sb)) {
-    //    // TODO: Wave a hit Player b
-    //    return false;
-    //} else if (view->isWave(sb) && view->isPlayer(sa)) {
-    //    // TODO: Wave b hit Player a
-    //    return false;
-    //} else {
-    //    return false;
-    //}
+    auto gra = contact.getShapeA()->getBody()->getGroup();
+    auto grb = contact.getShapeB()->getBody()->getGroup();
+
+    // Player and block
+    if (isPlayerAndBody(gra, grb)) {
+        return true;
+    }
+    
+    // Player and wave
+    if (gra == GROUP_WAVE && grb == GROUP_PLAYER) {
+        //playerBeAttacked(view->getPlayerId(sb));
+    } else if (grb == GROUP_WAVE && gra == GROUP_PLAYER) {
+        //playerBeAttacked(view->getPlayerId(sa));
+    }
+
+    // Player and props
+    if (gra == GROUP_PLAYER && grb == GROUP_PROPS) {
+        //playerGetProps(view->getPlayerId(sa), sb);
+    } else if (gra == GROUP_PROPS && grb == GROUP_PLAYER) {
+        //playerGetProps(view->getPlayerId(sb), sa);
+    }
+
+    // Wave and block
+    if (gra == GROUP_WAVE && grb == GROUP_BLOCK) {
+        blockBeAttacked(sb);
+    } else if (gra == GROUP_BLOCK && grb == GROUP_WAVE) {
+        blockBeAttacked(sa);
+    }
+
+    // Wave and bubble
+    if (gra == GROUP_WAVE && grb == GROUP_BUBBLE) {
+        bubbleExplode(sb);
+    } else if (gra == GROUP_BUBBLE && grb == GROUP_WAVE) {
+        bubbleExplode(sa);
+    }
+
     return false;
 }
 
 bool GameSceneController::spriteOnContactPreSolve(PhysicsContact & contact, PhysicsContactPreSolve & solve) {
-    //auto grid0 = view->getGridPosition(contact.getShapeA()->getBody()->getNode());
-    //auto grid1 = view->getGridPosition(contact.getShapeB()->getBody()->getNode());
-    //int p0 = model->isPlayer(grid0);
-    //int p1 = model->isPlayer(grid1);
-    //if (p0 != -1) {
-    //    return playerPresolve(p0, contact.getShapeA()->getBody(), contact);
-    //} else if (p1 != -1) {
-    //    return playerPresolve(p1, contact.getShapeB()->getBody(), contact);
-    //} else {
-    //    // TODO: Bubble explosion
-    //}
-    auto sa = contact.getShapeA()->getBody()->getNode();
-    auto sb = contact.getShapeB()->getBody()->getNode();
-    //if (view->isPlayer(sa) || view->isPlayer(sb)) {
-    //    Vec2 g;
-    //    int p;
-    //    if (view->isPlayer(sa)) {
-    //        g = view->getGridPosition(sb);
-    //        p = 0;
-    //    } else {
-    //        g = view->getGridPosition(sa);
-    //        p = 1;
-    //    }
-    //    auto block = model->map[(int)g.x][(int)g.y];
-    //    if (block != nullptr && !block->isBreakable()) {
-    //        playerPresolve(p, sa->getPhysicsBody(), contact);
-    //        return true;
-    //    }
-    //} 
+    auto gra = contact.getShapeA()->getBody()->getGroup();
+    auto grb = contact.getShapeB()->getBody()->getGroup();
+
+    if (isPlayerAndBody(gra, grb)) {
+        playerPresolve(gra == GROUP_PLAYER ? contact.getShapeA()->getBody()->getNode() : contact.getShapeB()->getBody()->getNode());
+    }
+
     return true;
 }
 
 void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
-    //auto grid0 = view->getGridPosition(contact.getShapeA()->getBody()->getNode());
-    //auto grid1 = view->getGridPosition(contact.getShapeB()->getBody()->getNode());
-    //int p0 = model->isPlayer(grid0);
-    //int p1 = model->isPlayer(grid1);
-    //if (p0 != -1) {
-    //    return playerSeparate(p0, contact.getShapeA()->getBody());
-    //} else if (p1 != -1) {
-    //    return playerSeparate(p1, contact.getShapeB()->getBody());
-    //}
+    auto gra = contact.getShapeA()->getBody()->getGroup();
+    auto grb = contact.getShapeB()->getBody()->getGroup();
+
+    if (isPlayerAndBody(gra, grb)) {
+        playerSeparate(gra == GROUP_PLAYER ? contact.getShapeA()->getBody()->getNode() : contact.getShapeB()->getBody()->getNode());
+    }
 }
 
 void GameSceneController::gameReady() {
@@ -148,26 +150,35 @@ void GameSceneController::gameStart() {
     model->setStatus(GameSceneModel::Status::running);
 }
 
-bool GameSceneController::playerPresolve(int p, PhysicsBody * playerBody, PhysicsContact & contact) {
-    switch (model->players[p]->getDirection()) {
-    case PlayerModel::Direction::up:
-    case PlayerModel::Direction::down:
-        playerBody->setVelocity(Vec2(playerBody->getVelocity().x, model->players[p]->getVelocity().y));
-        return true;
-    case PlayerModel::Direction::left:
-    case PlayerModel::Direction::right:
-        playerBody->setVelocity(Vec2(model->players[p]->getVelocity().x, playerBody->getVelocity().y));
-        return true;
-    case PlayerModel::Direction::still:
-        playerBody->setVelocity(Vec2::ZERO);
-        return false;
-    default:
-        return false;
-    }
+bool GameSceneController::playerPresolve(Node * player) {
+    //int p = view->getPlayerId(player);
+    //auto body = player->getPhysicsBody();
+    //switch (model->players[p]->getDirection()) {
+    //case PlayerModel::Direction::up:
+    //case PlayerModel::Direction::down:
+    //    body->setVelocity(Vec2(body->getVelocity().x, model->players[p]->getVelocity().y));
+    //    return true;
+    //case PlayerModel::Direction::left:
+    //case PlayerModel::Direction::right:
+    //    body->setVelocity(Vec2(model->players[p]->getVelocity().x, body->getVelocity().y));
+    //    return true;
+    //case PlayerModel::Direction::still:
+    //    body->setVelocity(Vec2::ZERO);
+    //    return false;
+    //default:
+    //    return false;
+    //}
+    return false;
 }
 
-void GameSceneController::playerSeparate(int p, PhysicsBody * playerBody) {
-    playerBody->setVelocity(model->players[p]->getVelocity());
+void GameSceneController::playerSeparate(Node * player) {
+    //int p = view->getPlayerId(player);
+    //player->getPhysicsBody()->setVelocity(model->players[p]->getVelocity());
+}
+
+bool GameSceneController::isPlayerAndBody(int a, int b) {
+    return (a == GROUP_PLAYER && (b == GROUP_BLOCK || b == GROUP_WALL || b == GROUP_BUBBLE))
+        || (b == GROUP_PLAYER && (a == GROUP_BLOCK || a == GROUP_WALL || a == GROUP_BUBBLE));
 }
 
 void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
@@ -178,6 +189,12 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
 void GameSceneController::placeBubble(int p) {}
 
 void GameSceneController::useProps(int p, int i) {}
+
+void GameSceneController::playerBeAttacked(int p) {}
+
+void GameSceneController::playerGetProps(int p, Node * pr) {}
+
+void GameSceneController::blockBeAttacked(Node * b) {}
 
 void GameSceneController::countdown(float delta) {
     int time = model->getTime();

@@ -10,23 +10,35 @@ USING_NS_CC;
 
 class GameSceneController : public Scene, public GameSceneControllerDelegate {
 public:
-    const static int TAG_PLAYER = 1;
-    enum CollisionType { PlayerWall, PlayerBubble, PlayerBox };
+    //const static int TAG_PLAYER = 1;
+    //enum CollisionType { PlayerWall, PlayerBubble, PlayerBox };
+    const static int GROUP_PLAYER = 1;
+    const static int GROUP_BLOCK = 2;
+    const static int GROUP_WALL = 3;
+    const static int GROUP_BUBBLE = 4;
+    const static int GROUP_WAVE = 5;
+    const static int GROUP_PROPS = 6;
+    // Inherited from Scene
 	static Scene * createScene();       // Instantialize a Controller as Scene, used by Director.
-    //CREATE_FUNC(GameSceneController)
     static GameSceneController * createWithPhysics();
 	virtual bool init();
     virtual void onExit();
     virtual void update(float delta);
+    // Inherited from GameSceneControllerDelegate
+    virtual void bubbleExplode(Node * node);
 private:
     // Helper functions
     void gameReady();
     void gameStart();
-    bool playerPresolve(int p, PhysicsBody * playerBody, PhysicsContact & contact);
-    void playerSeparate(int p, PhysicsBody * playerBody);
+    bool playerPresolve(Node * player);
+    void playerSeparate(Node * player);
+    bool isPlayerAndBody(int a, int b);
     void changePlayerDirection(int p, PlayerModel::Direction d);
     void placeBubble(int p);
     void useProps(int p, int i);
+    void playerBeAttacked(int p);
+    void playerGetProps(int p, Node * pr);
+    void blockBeAttacked(Node * b);
     
     // Schedulers
     void countdown(float delta);
