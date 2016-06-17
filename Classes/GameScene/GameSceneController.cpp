@@ -51,7 +51,9 @@ void GameSceneController::onExit() {
 void GameSceneController::update(float delta) {
 }
 
-void GameSceneController::bubbleExplode(Node * node) {}
+void GameSceneController::bubbleExplode(Node * node) {
+    // TODO: Bubble explode
+}
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
     auto sa = contact.getShapeA()->getBody()->getNode();
@@ -116,7 +118,7 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
 }
 
 void GameSceneController::gameReady() {
-    // TODO
+    // TODO: Game ready
     // Load ui
     //view->loadUI();
 
@@ -186,15 +188,25 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
     //view->setPlayerVelocity(p, model->players[p]->getVelocity());
 }
 
-void GameSceneController::placeBubble(int p) {}
+void GameSceneController::placeBubble(int p) {
+    // TODO: Place bubble
+}
 
-void GameSceneController::useProps(int p, int i) {}
+void GameSceneController::useProps(int p, int i) {
+    // TODO: Use props
+}
 
-void GameSceneController::playerBeAttacked(int p) {}
+void GameSceneController::playerBeAttacked(int p) {
+    // TODO: Player is attacked
+}
 
-void GameSceneController::playerGetProps(int p, Node * pr) {}
+void GameSceneController::playerGetProps(int p, Node * pr) {
+    // TODO: Player get props
+}
 
-void GameSceneController::blockBeAttacked(Node * b) {}
+void GameSceneController::blockBeAttacked(Node * b) {
+    // TODO: Block is attacked(destroyed)
+}
 
 void GameSceneController::countdown(float delta) {
     int time = model->getTime();
