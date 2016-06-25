@@ -225,15 +225,20 @@ void GameSceneController::useProps(int p, const char * k) {
 }
 
 void GameSceneController::playerBeAttacked(int p) {
-    // TODO: Player is attacked
+    // Hard-coded damage
+    model->players[p]->addHp(-10);
 }
 
 void GameSceneController::playerGetProps(int p, Node * pr) {
-    // TODO: Player get props
+    auto g = view->getGridPosition(pr);
+    auto props = (ItemBlockModel *)model->map[(int)g.x][(int)g.y];
+    // TODO: What is resume?
+    props->applyToPlayer(model->players[p], true);
+    model->map[(int)g.x][(int)g.y] = nullptr;
 }
 
 void GameSceneController::blockBeAttacked(Node * b) {
-    // TODO: Block is attacked(destroyed)
+    generateProps(view->getGridPosition(b));
 }
 
 void GameSceneController::countdown(float delta) {
