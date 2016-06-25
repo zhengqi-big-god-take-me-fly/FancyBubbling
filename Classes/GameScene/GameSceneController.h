@@ -23,14 +23,15 @@ public:
     // Inherited from Scene
 	static Scene * createScene();       // Instantialize a Controller as Scene, used by Director.
     static GameSceneController * createWithPhysics();
-	virtual bool init();
+	//virtual bool init();
+    virtual bool initWithPhysics();
     virtual void onExit();
     virtual void update(float delta);
     // Inherited from GameSceneControllerDelegate
     virtual void bubbleExplode(Node * node);
 private:
     // Should be in Model
-    BlockModel * getBlock(Vec2 v);
+    BlockModel * & getBlock(Vec2 v);
     // Helper functions
     void gameReady();
     void gameStart();
@@ -43,6 +44,7 @@ private:
     void playerBeAttacked(int p);
     void playerGetProps(int p, Node * pr);
     void blockBeAttacked(Node * b);
+    void generateProps(Vec2 p);
     
     // Schedulers
     void countdown(float delta);

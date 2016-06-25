@@ -1,5 +1,6 @@
 #include "GameSceneController.h"
 #include "BubbleModel.h"
+#include "ItemModel.h"
 
 Scene * GameSceneController::createScene() {
 	return GameSceneController::createWithPhysics();
@@ -16,16 +17,20 @@ GameSceneController * GameSceneController::createWithPhysics() {
     }
 }
 
-bool GameSceneController::init() {
+bool GameSceneController::initWithPhysics() {
+    if (!Scene::initWithPhysics()) {
+        return false;
+    }
+
     // View initialization
-	view = GameSceneView::create(this);
-	addChild(view);
-    
+    view = GameSceneView::create(this);
+    addChild(view);
+
     // Model initialization
     model = GameSceneModel::create();
     model->retain();                    // Controller retains model instance.
 
-    // EventListeners
+                                        // EventListeners
     auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyPressed = CC_CALLBACK_2(GameSceneController::keyboardOnKeyPressed, this);
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameSceneController::keyboardOnKeyReleased, this);
@@ -40,7 +45,7 @@ bool GameSceneController::init() {
 
     scheduleUpdate();
 
-	return true;
+    return true;
 }
 
 void GameSceneController::onExit() {
@@ -130,14 +135,12 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
     }
 }
 
-BlockModel * GameSceneController::getBlock(Vec2 v) {
+BlockModel * & GameSceneController::getBlock(Vec2 v) {
     return model->map[(int)v.x][(int)v.y];
 }
 
 void GameSceneController::gameReady() {
     // TODO: Game ready
-    // Load ui
-    //view->loadUI();
 
     // Load map
     //model->prepareMap("garden.json");
@@ -230,15 +233,24 @@ void GameSceneController::playerBeAttacked(int p) {
 }
 
 void GameSceneController::playerGetProps(int p, Node * pr) {
-    auto g = view->getGridPosition(pr);
-    auto props = (ItemBlockModel *)model->map[(int)g.x][(int)g.y];
-    // TODO: What is resume?
-    props->applyToPlayer(model->players[p], true);
-    model->map[(int)g.x][(int)g.y] = nullptr;
+    //auto g = view->getGridPosition(pr);
+    //auto props = (ItemBlockModel *)model->map[(int)g.x][(int)g.y];
+    //// TODO: What is resume?
+    //props->applyToPlayer(model->players[p], true);
+    //model->map[(int)g.x][(int)g.y] = nullptr;
 }
 
 void GameSceneController::blockBeAttacked(Node * b) {
-    generateProps(view->getGridPosition(b));
+    //auto g = view->getGridPosition(b);
+    //getBlock(g) = nullptr;
+    //generateProps(g);
+}
+
+void GameSceneController::generateProps(Vec2 p) {
+    //auto key = model->propsKeys[RandomHelper::random_int(1, model->propsKeys.size()) - 1];
+    //auto item = Item::create(key);
+    //view->addProps(p.x, p.y, "player-avatar-box.png");
+    //model->map[(int)p.x][(int)p.y] = ItemBlockModel::create(item);
 }
 
 void GameSceneController::countdown(float delta) {
