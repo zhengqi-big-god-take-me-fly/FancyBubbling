@@ -29,3 +29,47 @@ bool GameSceneView::init(GameSceneControllerDelegate * _controller, PhysicsWorld
 
     return true;
 }
+
+int GameSceneView::getPlayerId(Node * node) {
+    return objectsLayer->getPlayerId(node);
+}
+
+Vec2 GameSceneView::getGridPosition(Node * node) {
+    return objectsLayer->getGridPosition(node);
+}
+
+Vec2 GameSceneView::getPlayerGridPosition(int p) {
+    return objectsLayer->getPlayerGridPosition(p);
+}
+
+void GameSceneView::removeNode(Node * node) {
+    objectsLayer->removeNode(node);
+}
+
+void GameSceneView::useMap(const char * filename) {
+    objectsLayer->useMap(filename);
+}
+
+void GameSceneView::addPlayer(int index, int x, int y, const char * filename) {
+    objectsLayer->addPlayer(index, x, y, filename);
+}
+
+void GameSceneView::setHP(int p, int hp, int maxHp) {
+    objectsLayer->setHP(p, hp, maxHp);
+}
+
+void GameSceneView::setPropsCount(int p, int i, int c) {
+    objectsLayer->setPropsCount(p, i, c);
+}
+
+void GameSceneView::setPlayerVelocity(int p, Vec2 v) {
+    objectsLayer->setPlayerVelocity(p, v);
+}
+
+void GameSceneView::notifyReady(const char * text, float time) {
+    objectsLayer->notifyReady(text, time);
+}
+
+void GameSceneView::showPauseScreen() {}
+
+void GameSceneView::hidePauseScreen() {}

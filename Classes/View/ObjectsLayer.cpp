@@ -17,20 +17,20 @@ bool ObjectsLayer::init(PhysicsWorld* world) {
 	if (!Layer::init()) {
 		return false;
 	}
-	this->setPhysicsWorld(world);
+
 	origin = Director::getInstance()->getVisibleOrigin();
 	layerSize = Director::getInstance()->getVisibleSize();
 
-	// Playing Background
-	//backgroundImage = Sprite::create("res/game-area-background.png");
+	this->setPhysicsWorld(world);
+
 	addEdge();
 
-	for (int i = 0; i < 2; i++) {
-		//players.pushBack(NULL);
-		//hps.pushBack(NULL);
-		//avatars.pushBack(NULL);
-		//hpTimers.pushBack(NULL);
-	}
+	//for (int i = 0; i < 2; i++) {
+	//	//players.pushBack(NULL);
+	//	//hps.pushBack(NULL);
+	//	//avatars.pushBack(NULL);
+	//	//hpTimers.pushBack(NULL);
+	//}
 
 	//player1->setPhysicsBody(PhysicsBody::createCircle(player1->getContentSize().height / 2));
 	//player1->setAnchorPoint(Vec2(0.5, 0.5));
@@ -49,21 +49,25 @@ bool ObjectsLayer::init(PhysicsWorld* world) {
 
 	//addChild(backgroundImage);
 
-	playerCount = 0;
+	//playerCount = 0;
 
 	return true;
 }
 
 int ObjectsLayer::getPlayerId(Node * node)
 {
-	int r = 0;
-	for (int i = 0; i < players.size(); i++) {
-		if (players.at(i) == node) {
-			r = i;
-			break;
-		}
-	}
-	return r;
+    for (std::map<int, Node *>::iterator it = players.begin(); it != players.end(); ++it)
+        if (it->second == node)
+            return it->first;
+    return -1;
+	//int r = 0;
+	//for (int i = 0; i < players.size(); i++) {
+	//	if (players.at(i) == node) {
+	//		r = i;
+	//		break;
+	//	}
+	//}
+	//return r;
 }
 
 ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world) {
@@ -98,14 +102,12 @@ Vec2 ObjectsLayer::getGridPosition(Node * node)
 	return Vec2(15 - 1 - x , 13 - 1 - y);
 }
 
-
-
 Vec2 ObjectsLayer::getPlayerGridPosition(int p)
 {
-	if (0 <= p && p < 2) {
-		return ObjectsLayer::getGridPosition(ObjectsLayer::players.at(p));
-	}
-	return Vec2(0,0);
+    auto player = players.find(p);
+    if (player != players.end())
+        return getGridPosition(player->second);
+	return InvalidGridPosition;
 }
 
 void ObjectsLayer::removeNode(Node * node)
@@ -117,7 +119,8 @@ void ObjectsLayer::removeNode(Node * node)
 void ObjectsLayer::useMap(const char * filename)
 {
 	map = TMXTiledMap::create(filename);
-	Vec2 acturalPos = Vec2(layerSize.width / 2 - 300, layerSize.height / 2 - 260);
+    map->setAnchorPoint(Vec2(0.5f, 1));
+	Vec2 acturalPos = Vec2(origin.x + layerSize.width / 2, origin.y + layerSize.height - 40);
 	map->setPosition(acturalPos);
 	this->addChild(map, 0);
 }
@@ -126,54 +129,62 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 {
 	//char *con;
 	//itoa(index, con, 10);
+    //
+	//if (playerCount >= 2 || index < 0 || index > 2 || index > players.size()) return;
+	//if (index == 1) {
+	//	auto texture = Director::getInstance()->getTextureCache()->addImage("player-1.png");
+	//	auto frame0 = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
+	//	players.replace(1, Sprite::createWithSpriteFrame(frame0));
+	//	setGridPosition(players.at(1), x, y);
+	//	players.at(1)->setPhysicsBody(PhysicsBody::createCircle(32));
+	//	p2_left.reserve(6);
+	//	for (int i = 3; i < 9; i++) {
+	//		auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4) , 64 * (i / 4), 40, 64)));
+	//		p2_left.pushBack(frame);
+	//	}
+    //
+	//	p2_right.reserve(6);
+	//	for (int i = 11; i < 16; i++) {
+	//		auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
+	//		p2_right.pushBack(frame);
+	//	}
+	//	playerCount++;
+	//}
+	//else {
+	//	auto texture2 = Director::getInstance()->getTextureCache()->addImage("res/player-0.png");
+	//	auto frame1 = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
+	//	players.replace(0, Sprite::createWithSpriteFrame(frame1));
+	//	setGridPosition(players.at(0), x, y);
+	//	players.at(0)->setPhysicsBody(PhysicsBody::createCircle(32));
+	//	p1_left.reserve(6);
+	//	for (int i = 3; i < 9; i++) {
+	//		auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
+	//		p1_left.pushBack(frame);
+	//	}
+    //
+	//	p1_right.reserve(6);
+	//	for (int i = 11; i < 16; i++) {
+	//		auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
+	//		p1_right.pushBack(frame);
+	//	}
+	//	playerCount++;
+	//}
 
-	if (playerCount >= 2 || index < 0 || index > 2 || index > players.size()) return;
-	if (index == 1) {
-		auto texture = Director::getInstance()->getTextureCache()->addImage("res/player-1.png");
-		auto frame0 = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
-		players.replace(1, Sprite::createWithSpriteFrame(frame0));
-		setGridPosition(players.at(1), x, y);
-		players.at(1)->setPhysicsBody(PhysicsBody::createCircle(32));
-		p2_left.reserve(6);
-		for (int i = 3; i < 9; i++) {
-			auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4) , 64 * (i / 4), 40, 64)));
-			p2_left.pushBack(frame);
-		}
+    // TODO: Add filename.plist to sprite frame cache
+    // Add resource to cache
+    auto sfc = SpriteFrameCache::getInstance();
+    if (sfc->isSpriteFramesWithFileLoaded(std::string(filename) + ".plist") == false) {
+        sfc->addSpriteFramesWithFile(std::string(filename) + ".plist");
+    }
 
-		p2_right.reserve(6);
-		for (int i = 11; i < 16; i++) {
-			auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
-			p2_right.pushBack(frame);
-		}
-		playerCount++;
-	}
-	else {
-		auto texture2 = Director::getInstance()->getTextureCache()->addImage("res/player-0.png");
-		auto frame1 = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
-		players.replace(0, Sprite::createWithSpriteFrame(frame1));
-		setGridPosition(players.at(0), x, y);
-		players.at(0)->setPhysicsBody(PhysicsBody::createCircle(32));
-		p1_left.reserve(6);
-		for (int i = 3; i < 9; i++) {
-			auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
-			p1_left.pushBack(frame);
-		}
-
-		p1_right.reserve(6);
-		for (int i = 11; i < 16; i++) {
-			auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
-			p1_right.pushBack(frame);
-		}
-		playerCount++;
-	}
-
-}
-
-void ObjectsLayer::setAvatar(int p, const char * filename)
-{
-	//if (p < 0 || p > 2 || p > avatars.size()) return;
-	//if (avatars.size() > 2) return;
-	//avatars.replace(p, Sprite::create(filename));
+    // Create sprite
+    char frameName[128];
+    sprintf(frameName, "%s-%s-%d.png", filename, "down", 0);
+    auto player = Sprite::createWithSpriteFrameName(frameName);
+    setGridPosition(player, x, y);
+    player->setPhysicsBody(PhysicsBody::createCircle(20));
+    map->addChild(player);
+    players.insert(std::make_pair(index, player));
 }
 
 void ObjectsLayer::setHP(int p, int hp, int maxHp)
@@ -200,15 +211,14 @@ void ObjectsLayer::setPropsCount(int p, int i, int c)
 
 void ObjectsLayer::setPlayerVelocity(int p, Vec2 v)
 {
-	//Not implemented Yet
-
+    players.at(p)->getPhysicsBody()->setVelocity(v);
 }
 
 void ObjectsLayer::notifyReady(const char * text, float time)
 {
-	notifyText = Label::createWithTTF(text, "fonts/Marker Felt.ttf", 40);
-	notifyText->setOpacity(1);
-	notifyText->setPosition(convertToNodeSpace(Vec2(layerSize.width / 2, layerSize.height / 2)));
+	notifyText = Label::createWithTTF(text, "fonts/theme-font.ttf", 40, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+	notifyText->setPosition(layerSize.width / 2, layerSize.height / 2);
+    addChild(notifyText, 4);
 	scheduleOnce(schedule_selector(ObjectsLayer::deprecateLabel), time);
 }
 
@@ -225,31 +235,18 @@ void ObjectsLayer::setGridPosition(Node *dest , int x , int y)
 
 void ObjectsLayer::deprecateLabel(float time)
 {
-	notifyText->setOpacity(0);
 	notifyText->removeFromParentAndCleanup(true);
-	notifyText = NULL;
+	notifyText = nullptr;
 }
 
 void ObjectsLayer::addEdge(void)
 {
-	edge = Sprite::create();
-	auto bound = PhysicsBody::createEdgeBox(layerSize);
+	auto bound = PhysicsBody::createEdgeBox(Size(600, 520));
 	bound->setDynamic(false);
 	bound->setTag(0);
 
-	edge->setPosition(Point(layerSize.width / 2 , layerSize.height / 2));
+	edge = Sprite::create();
+	edge->setPosition(Point(layerSize.width / 2 , 340));
 	edge->setPhysicsBody(bound);
 	addChild(edge);
 }
-
-
-
-//Vec2 getPlayerGridPosition(int p) {
-//	if (0 <= p && p < 2) {
-//		return ObjectsLayer::getGridPosi)
-//	}
-//}
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-exit(0);
-#endif
-

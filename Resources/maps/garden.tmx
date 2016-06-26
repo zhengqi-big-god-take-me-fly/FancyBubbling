@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="13" tilewidth="40" tileheight="40" nextobjectid="1">
+ <tileset firstgid="1" name="GardenTileSet" tilewidth="40" tileheight="40" tilecount="24" columns="4">
+  <image source="garden.png" width="160" height="240"/>
+ </tileset>
+ <layer name="Ground" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJwTZWBgEMWCxYBYHEpjk8eHKdErgYTpae+o3tH4BQDh3BA+
+  </data>
+ </layer>
+ <layer name="Row0" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYGBg4AdiPiSalwEBBKB8NqgcG1ScjWEUjILhBQCIawCF
+  </data>
+ </layer>
+ <layer name="Row1" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYGBgYARiHiSaBUrDAIjPBcTcDJiAFYgFkGgOKA0DID4fEPNj0TsKRsFgAgDgdwCr
+  </data>
+ </layer>
+ <layer name="Row2" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAccAMxF5TmhIrxQDGIzwRlI9MwwA/EfFCaFyomAMUgPhuUjUyPglFACwAAkZoBAQ==
+  </data>
+ </layer>
+ <layer name="Row3" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgYwAPEjGg0C5SGARCfG4i50GgBIGZFozmgNAyA+PxAzIdGj4JRgAsAAH9+ARM=
+  </data>
+ </layer>
+ <layer name="Row4" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBh6gAuIudFoTiR5HiifCcpGpvmAmB+N5kXSKwDls0HZyPQoGN4AAEhqARU=
+  </data>
+ </layer>
+ <layer name="Row5" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBhZgBuIGdFoFiDmgWIY4ILKIdP8QMyKRnMAsQAUwwAfVA6ZHgWDHwAADi4BGw==
+  </data>
+ </layer>
+ <layer name="Row6" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFxAIWIObEQsMADw55EM0BxLxYaBgQwCHPQTPfjAJ0AAB7AwDp
+  </data>
+ </layer>
+ <layer name="Row7" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF9ABcQMyNRoMAD5IaFqg4IxrNB8T8aDQICCDp5YCKs6LRo4B4AABfWwD5
+  </data>
+ </layer>
+ <layer name="Row8" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFgx0wAzEPGs0JleOBYhCfG4i50Gh2IBZAo3mhegWgGMTnB2I+NHqkAQBpCwE5
+  </data>
+ </layer>
+ <layer name="Row9" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFwxlwAzEXGs0CxDxIamB8RjSaH4j50GgOIBZA0gvjs6LRQxEAAALPARM=
+  </data>
+ </layer>
+ <layer name="Row10" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFowA7YEaieaA0J5I8D5TPBcTcSDQIsCPRAlCaF0mvAJTPB8T8SPRAAgCeAADn
+  </data>
+ </layer>
+ <layer name="Row11" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4B2gAuIuaE0CxDzQDEDEp8RiUYGfEDMD6U5gFgAihmQ+KxINKUAAGhQAN8=
+  </data>
+ </layer>
+ <layer name="Row12" width="15" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2BwAWYkmgtKcyLJ80D53FB5biQ5diSaD0rzIskLQPn8UHl+JDkALfAAyw==
+  </data>
+ </layer>
+</map>

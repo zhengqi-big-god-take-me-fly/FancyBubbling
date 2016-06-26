@@ -3,7 +3,10 @@
 #include "ItemModel.h"
 
 Scene * GameSceneController::createScene() {
-	return GameSceneController::createWithPhysics();
+	auto scene = GameSceneController::createWithPhysics();
+    scene->getPhysicsWorld()->setGravity(Vec2::ZERO);
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    return scene;
 }
 
 GameSceneController * GameSceneController::createWithPhysics() {
@@ -30,7 +33,7 @@ bool GameSceneController::initWithPhysics() {
     model = GameSceneModel::create();
     model->retain();                    // Controller retains model instance.
 
-                                        // EventListeners
+    // EventListeners
     auto keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyPressed = CC_CALLBACK_2(GameSceneController::keyboardOnKeyPressed, this);
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameSceneController::keyboardOnKeyReleased, this);
@@ -43,7 +46,7 @@ bool GameSceneController::initWithPhysics() {
 
     gameReady();
 
-    scheduleUpdate();
+    //scheduleUpdate();
 
     return true;
 }
@@ -140,21 +143,21 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
 //}
 
 void GameSceneController::gameReady() {
-    // TODO: Game ready
-
     // Load map
-    //model->prepareMap("garden.json");
-    //view->addMap("garden.tmx");
+    model->readConfigFromFile("maps/garden.json");
+    view->useMap("maps/garden.tmx");
 
     // Add players
-    model->players.pushBack(PlayerModel::create());
-    model->players.pushBack(PlayerModel::create());
-    //view->addPlayer(0);
-    //view->addPlayer(1);
+    auto p1 = PlayerModel::create();
+    p1->setSpeed(10);
+    model->players.pushBack(p1);
+    auto p2 = PlayerModel::create();
+    p2->setSpeed(10);
+    model->players.pushBack(p2);
+    view->addPlayer(0, 0, 0, "player-0");
+    view->addPlayer(1, 14, 12, "player-1");
 
     // Load hud
-    //view->setAvatar(0, "player0.png");
-    //view->setAvatar(1, "player1.png");
     //view->setHP(0, model->players[0]->getHP(), model->players[0]->getMaxHP());
     //view->setHP(1, model->players[1]->getHP(), model->players[1]->getMaxHP());
     //view->setPropsCount(0, 0, 0);
@@ -170,6 +173,22 @@ void GameSceneController::gameReady() {
 
 void GameSceneController::gameStart() {
     model->setStatus(GameSceneModel::Status::running);
+}
+
+void GameSceneController::gamePause() {
+    model->setStatus(GameSceneModel::Status::pause);
+    // TODO: pause
+    view->showPauseScreen();
+}
+
+void GameSceneController::gameResume() {
+    model->setStatus(GameSceneModel::Status::running);
+    // TODO: resume
+    view->hidePauseScreen();
+}
+
+void GameSceneController::gameExit() {
+    Director::getInstance()->popScene();
 }
 
 bool GameSceneController::playerPresolve(Node * player) {
@@ -205,7 +224,7 @@ bool GameSceneController::isPlayerAndBody(int a, int b) {
 
 void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
     model->players.at(p)->setDirection(d);
-    //view->setPlayerVelocity(p, model->players[p]->getVelocity());
+    view->setPlayerVelocity(p, model->players.at(p)->getVelocity());
 }
 
 void GameSceneController::placeBubble(int p) {
@@ -256,19 +275,27 @@ void GameSceneController::generateProps(Vec2 p) {
 void GameSceneController::countdown(float delta) {
     int time = model->getTime();
     if (time <= 0) {
-        // TODO: Interface Request
-        // void notifyReady(const std::string &);
-        //view->notifyReady("START!");
+        view->notifyReady("START!");
         unschedule(schedule_selector(GameSceneController::countdown));
         gameStart();
     } else {
-        // TODO: Interface Request
-        //view->notifyReady(std::to_string(time));
+        view->notifyReady(std::to_string(time).c_str());
         model->setTime(time - 1);
     }
 }
 
 void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Event * e) {
+    if (model->getStatus() == model->pause) {
+        if (code == EventKeyboard::KeyCode::KEY_ESCAPE) {
+            gameExit();
+        } else {
+            gameResume();
+        }
+        return;
+    } else if (model->getStatus() == model->running && code == EventKeyboard::KeyCode::KEY_ESCAPE) {
+        gamePause();
+        return;
+    }
     switch (code) {
     // Player0
     case EventKeyboard::KeyCode::KEY_E:

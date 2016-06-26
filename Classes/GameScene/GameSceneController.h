@@ -35,6 +35,9 @@ private:
     // Helper functions
     void gameReady();
     void gameStart();
+    void gamePause();
+    void gameResume();
+    void gameExit();
     bool playerPresolve(Node * player);
     void playerSeparate(Node * player);
     bool isPlayerAndBody(int a, int b);

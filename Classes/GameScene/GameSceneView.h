@@ -16,6 +16,24 @@ class GameSceneView : public Node {
 public:
     static GameSceneView * create(GameSceneControllerDelegate * _controller, PhysicsWorld * _world);
     virtual bool init(GameSceneControllerDelegate * _controller, PhysicsWorld * _world);
+    // Public interface
+    int getPlayerId(Node * node);
+    Vec2 getGridPosition(Node * node);
+    Vec2 getPlayerGridPosition(int p);
+    void removeNode(Node * node);
+    void useMap(const char * filename);
+    void addPlayer(int index, int x, int y, const char * filename);
+    //void setAvatar(int p, const char * filename);
+    void setHP(int p, int hp, int maxHp);
+    void setPropsCount(int p, int i, int c);
+    void setPlayerVelocity(int p, Vec2 v);
+    void notifyReady(const char * text, float time = 1);
+    //void setGridPosition(Node *dest, int x, int y);
+    //void deprecateLabel(float time);
+    //void setPhysicsWorld(PhysicsWorld* world);
+    //void addEdge();
+    void showPauseScreen();
+    void hidePauseScreen();
 private:
     GameSceneControllerDelegate * controller;
     BackgroundLayer * backgroundLayer;
