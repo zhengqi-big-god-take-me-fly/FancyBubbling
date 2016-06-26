@@ -135,9 +135,9 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
     }
 }
 
-BlockModel * & GameSceneController::getBlock(Vec2 v) {
-    return model->map[(int)v.x][(int)v.y];
-}
+//BlockModel * GameSceneController::getBlock(Vec2 v) {
+//    return model->getMap(v.x, v.y);
+//}
 
 void GameSceneController::gameReady() {
     // TODO: Game ready
@@ -147,8 +147,8 @@ void GameSceneController::gameReady() {
     //view->addMap("garden.tmx");
 
     // Add players
-    model->players.push_back(PlayerModel::create());
-    model->players.push_back(PlayerModel::create());
+    model->players.pushBack(PlayerModel::create());
+    model->players.pushBack(PlayerModel::create());
     //view->addPlayer(0);
     //view->addPlayer(1);
 
@@ -204,7 +204,7 @@ bool GameSceneController::isPlayerAndBody(int a, int b) {
 }
 
 void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
-    model->players[p]->setDirection(d);
+    model->players.at(p)->setDirection(d);
     //view->setPlayerVelocity(p, model->players[p]->getVelocity());
 }
 
@@ -222,14 +222,14 @@ void GameSceneController::placeBubble(int p) {
 
 void GameSceneController::useProps(int p, const char * k) {
     // TODO: Use props (TBD)
-    if (model->players[p]->items[k] > 0) {
-        --model->players[p]->items[k];
+    if (model->players.at(p)->items[k] > 0) {
+        --model->players.at(p)->items[k];
     }
 }
 
 void GameSceneController::playerBeAttacked(int p) {
     // Hard-coded damage
-    model->players[p]->addHp(-10);
+    model->players.at(p)->addHp(-10);
 }
 
 void GameSceneController::playerGetProps(int p, Node * pr) {
@@ -331,40 +331,40 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
     switch (code) {
     // Player0
     case EventKeyboard::KeyCode::KEY_E:
-        if (model->players[0]->getDirection() == PlayerModel::Direction::up)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::up)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_D:
-        if (model->players[0]->getDirection() == PlayerModel::Direction::down)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::down)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_S:
-        if (model->players[0]->getDirection() == PlayerModel::Direction::left)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::left)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_F:
-        if (model->players[0]->getDirection() == PlayerModel::Direction::right)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::right)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
     // Player1
     case EventKeyboard::KeyCode::KEY_I:
     case EventKeyboard::KeyCode::KEY_UP_ARROW:
-        if (model->players[1]->getDirection() == PlayerModel::Direction::up)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::up)
             changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_K:
     case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-        if (model->players[1]->getDirection() == PlayerModel::Direction::down)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::down)
             changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_J:
     case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        if (model->players[1]->getDirection() == PlayerModel::Direction::left)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::left)
             changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     case EventKeyboard::KeyCode::KEY_L:
     case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-        if (model->players[1]->getDirection() == PlayerModel::Direction::right)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::right)
             changePlayerDirection(1, PlayerModel::Direction::still);
         break;
     // Default

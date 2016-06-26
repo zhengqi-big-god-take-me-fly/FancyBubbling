@@ -31,7 +31,7 @@ public:
     virtual void bubbleExplode(Node * node);
 private:
     // Should be in Model
-    BlockModel * & getBlock(Vec2 v);
+    //BlockModel * & getBlock(Vec2 v);
     // Helper functions
     void gameReady();
     void gameStart();
