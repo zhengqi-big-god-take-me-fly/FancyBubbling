@@ -22,38 +22,37 @@ public:
     // Rewrite this method if you need some parameters to init.
     CREATE_FUNC(GameSceneModel);
     virtual bool init();
-    
+
     typedef enum {
         pause,   // 暂停
         ready,   // 准备
         running, // 正在进行
         stop     // 结束
     } Status;
-    
+
     CC_SYNTHESIZE(Status, _status, Status);
     CC_SYNTHESIZE(float, _time, Time);
 
     std::vector<Vector<BlockModel *> > map;
-    
+
     // 获取地图大小
     // 返回值 pair(column, row)
     Size getMapSize();
-    
-    // 删除地图中指定元素
+
+    // Remove specific tile from map
     bool removeMap(unsigned int column, unsigned int row);
-    
-    // 设置地图中指定元素
+
+    // Set block on specific tile
     bool setMap(unsigned int column, unsigned int row, BlockModel * block);
-    
-    // 获取地图指定元素
+
+    //// 获取地图指定元素
     BlockModel * getMap(unsigned int column, unsigned int row);
-    
+
     Vector<PlayerModel *> players;
-    
+
     // 读取配置文件
     bool readConfigFromFile(const std::string & fileName);
-    
-protected :
+protected:
 };
 
 #endif // !__GAME_SCENE_MODEL_H__

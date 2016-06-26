@@ -165,7 +165,7 @@ void GameSceneController::gameReady() {
     // Start countdown
     model->setTime(3);
     model->setStatus(GameSceneModel::Status::ready);
-    schedule(schedule_selector(GameSceneController::countdown, this), 1, 4, 1.0f / 60);
+    schedule(schedule_selector(GameSceneController::countdown), 1, 4, 1.0f / 60);
 }
 
 void GameSceneController::gameStart() {

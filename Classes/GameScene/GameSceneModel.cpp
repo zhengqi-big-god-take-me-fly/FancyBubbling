@@ -13,7 +13,7 @@ Size GameSceneModel::getMapSize() {
     unsigned int column = row > 0 ? map[0].size() : 0;
     return Size(column, row);
 }
-// 删除地图中指定元素
+// 删除地图中的指定元素
 bool GameSceneModel::removeMap(unsigned int column, unsigned int row) {
     if (row < map.size() && column < map[row].size()) {
         map[row].replace(column, BlockModel::create("empty"));
@@ -21,7 +21,7 @@ bool GameSceneModel::removeMap(unsigned int column, unsigned int row) {
     }
     return false;
 }
-// 设置地图中指定元素
+// 设置地图中的指定元素
 bool GameSceneModel::setMap(unsigned int column, unsigned int row, BlockModel * block) {
     if (row < map.size() && column < map[row].size()) {
         block->setPosition(Vec2(column, row));

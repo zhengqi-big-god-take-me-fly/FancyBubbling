@@ -42,13 +42,13 @@
     <ClCompile Include="..\Classes\GameScene\BubbleModel.cpp">
       <Filter>src\GameScene</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GameScene\GameSceneModel.cpp">
-      <Filter>src\GameScene</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\GameScene\ItemModel.cpp">
       <Filter>src\GameScene</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameScene\PlayerModel.cpp">
+      <Filter>src\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameScene\GameSceneModel.cpp">
       <Filter>src\GameScene</Filter>
     </ClCompile>
   </ItemGroup>
