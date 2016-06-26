@@ -22,13 +22,14 @@ public:
 	void setPropsCount(int p, int i, int c);
 	void setPlayerVelocity(int p, Vec2 v);
 	void notifyReady(const char * text, float time = 1);
-
+	void setGridPosition(Node *dest , int x, int y);
+	void deprecateLabel(float time);
 private:
 	Sprite *backgroundImage;
 
 	//Sprite *player1;
 	//Sprite *player2;
-
+	int playerCount;
 	Vec2 player1_pos;
 	Vec2 player2_pos;
 
@@ -45,12 +46,14 @@ private:
 
 	Vector<Node *> players;
 	Vector<Node *> avatars;
+	Vector<Node *> hps;
+	Vector<ProgressTimer *> hpTimers;
 	Vector<SpriteFrame*> p1_left;
 	Vector<SpriteFrame*> p2_left;
 	Vector<SpriteFrame*> p1_right;
 	Vector<SpriteFrame*> p2_right;
 
-
+	Label *notifyText;
 
 };
 
