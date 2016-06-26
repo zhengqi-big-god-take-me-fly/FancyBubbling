@@ -19,6 +19,9 @@
     <Filter Include="src\HomeScene">
       <UniqueIdentifier>{ed49ade9-4a54-4841-9d47-83ea6e1780ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\View">
+      <UniqueIdentifier>{4a6ac450-93f4-4bf3-b7f5-545084be02d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,6 +53,15 @@
     </ClCompile>
     <ClCompile Include="..\Classes\GameScene\GameSceneModel.cpp">
       <Filter>src\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\View\BackgroundLayer.cpp">
+      <Filter>src\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\View\HudLayer.cpp">
+      <Filter>src\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\View\ObjectsLayer.cpp">
+      <Filter>src\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +100,15 @@
     </ClInclude>
     <ClInclude Include="..\Classes\GameScene\PlayerModel.h">
       <Filter>src\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\View\BackgroundLayer.h">
+      <Filter>src\View</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\View\HudLayer.h">
+      <Filter>src\View</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\View\ObjectsLayer.h">
+      <Filter>src\View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
