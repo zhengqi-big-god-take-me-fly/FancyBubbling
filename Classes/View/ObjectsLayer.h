@@ -29,7 +29,7 @@ private:
 
 	//Sprite *player1;
 	//Sprite *player2;
-
+	int playerCount;
 	Vec2 player1_pos;
 	Vec2 player2_pos;
 
@@ -46,6 +46,8 @@ private:
 
 	Vector<Node *> players;
 	Vector<Node *> avatars;
+	Vector<Node *> hps;
+	Vector<ProgressTimer *> hpTimers;
 	Vector<SpriteFrame*> p1_left;
 	Vector<SpriteFrame*> p2_left;
 	Vector<SpriteFrame*> p1_right;
