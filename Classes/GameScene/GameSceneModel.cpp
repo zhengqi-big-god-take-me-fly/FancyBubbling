@@ -16,7 +16,7 @@ Size GameSceneModel::getMapSize() {
 // 删除地图中指定元素
 bool GameSceneModel::removeMap(unsigned int column, unsigned int row) {
     if (row < map.size() && column < map[row].size()) {
-        map[row].replace(column, nullptr);
+        map[row].replace(column, BlockModel::create("empty"));
         return true;
     }
     return false;
