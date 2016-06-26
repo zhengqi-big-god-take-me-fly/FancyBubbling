@@ -155,6 +155,9 @@ xcopy /Y /Q "$(COCOS_X_ROOT)\cocos2d-x-3.10\prebuilt\win32\*.*" "$(OutDir)"
     <ClCompile Include="..\Classes\GameScene\ItemModel.cpp" />
     <ClCompile Include="..\Classes\GameScene\PlayerModel.cpp" />
     <ClCompile Include="..\Classes\HomeScene\HomeScene.cpp" />
+    <ClCompile Include="..\Classes\View\BackgroundLayer.cpp" />
+    <ClCompile Include="..\Classes\View\HudLayer.cpp" />
+    <ClCompile Include="..\Classes\View\ObjectsLayer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +172,9 @@ xcopy /Y /Q "$(COCOS_X_ROOT)\cocos2d-x-3.10\prebuilt\win32\*.*" "$(OutDir)"
     <ClInclude Include="..\Classes\GameScene\PlayerModel.h" />
     <ClInclude Include="..\Classes\HomeScene\HomeScene.h" />
     <ClInclude Include="..\Classes\Utils\Macros.h" />
+    <ClInclude Include="..\Classes\View\BackgroundLayer.h" />
+    <ClInclude Include="..\Classes\View\HudLayer.h" />
+    <ClInclude Include="..\Classes\View\ObjectsLayer.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
