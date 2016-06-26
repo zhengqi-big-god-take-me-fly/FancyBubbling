@@ -48,6 +48,8 @@
 		52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B47A461A53D09B004E4C60 /* Security.framework */; };
 		58C9419A978881427916321E /* libcocos2d iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 290D4494ADB970C96A175DE7 /* libcocos2d iOS.a */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
+		A323319E1D1FC115008F14F6 /* maps in Resources */ = {isa = PBXBuildFile; fileRef = A323319D1D1FC115008F14F6 /* maps */; };
+		A323319F1D1FC115008F14F6 /* maps in Resources */ = {isa = PBXBuildFile; fileRef = A323319D1D1FC115008F14F6 /* maps */; };
 		A36278C91D085F84007B2EF8 /* BubbleModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36278C71D085F84007B2EF8 /* BubbleModel.cpp */; };
 		A36278CA1D085F84007B2EF8 /* BubbleModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36278C71D085F84007B2EF8 /* BubbleModel.cpp */; };
 		A36278CC1D089B72007B2EF8 /* HomeScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36278CB1D089B72007B2EF8 /* HomeScene.cpp */; };
@@ -123,6 +125,7 @@
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		537A4ADE8BCE60CE31EC2030 /* libcocos2d Mac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcocos2d Mac.a"; path = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.a"; sourceTree = "<absolute>"; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		A323319D1D1FC115008F14F6 /* maps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = maps; sourceTree = "<group>"; };
 		A36278C71D085F84007B2EF8 /* BubbleModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleModel.cpp; sourceTree = "<group>"; };
 		A36278C81D085F84007B2EF8 /* BubbleModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleModel.h; sourceTree = "<group>"; };
 		A36278CB1D089B72007B2EF8 /* HomeScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HomeScene.cpp; sourceTree = "<group>"; };
@@ -223,8 +226,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				46880B8319C43A87006E1F66 /* Classes */,
 				46880B7519C43A67006E1F66 /* Resources */,
+				46880B8319C43A87006E1F66 /* Classes */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				080E96DDFE201D6D7F000001 /* ios */,
 				503AE10617EB990700D1A890 /* mac */,
@@ -272,6 +275,7 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A323319D1D1FC115008F14F6 /* maps */,
 				E6BC457AB2ABD9A38B6F5AD7 /* res */,
 			);
 			name = Resources;
@@ -468,6 +472,7 @@
 				50EF62A217ECD613001EB2F8 /* Icon-29.png in Resources */,
 				50EF629617ECD46A001EB2F8 /* Icon-40.png in Resources */,
 				5087E78217EB970100C73F5D /* Icon-144.png in Resources */,
+				A323319E1D1FC115008F14F6 /* maps in Resources */,
 				50EF629817ECD46A001EB2F8 /* Icon-80.png in Resources */,
 				5087E78417EB970100C73F5D /* Icon-57.png in Resources */,
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
@@ -481,6 +486,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A323319F1D1FC115008F14F6 /* maps in Resources */,
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
 				110D46379695587C2CA3E160 /* res in Resources */,
 			);
