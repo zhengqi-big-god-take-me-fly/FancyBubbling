@@ -8,28 +8,28 @@ USING_NS_CC;
 
 class HudLayer : public Layer {
 public:
-	static Scene * createScene();
-	CREATE_FUNC(HudLayer);
+	//static Scene * createScene();
+	CREATE_FUNC(HudLayer)
 	virtual bool init();
 	void menuCloseCallback(Ref *pSender);
 private:
 	//Sprite *backgroundImage;
 
-	Sprite *player_1_leftItemHolder;
-	Sprite *player_1_rightItemHolder;
-	Sprite *player_2_leftItemHolder;
-	Sprite *player_2_rightItemHolder;
+	Sprite *player_1_itemHolder_1;
+	Sprite *player_1_itemHolder_2;
+	Sprite *player_2_itemHolder_1;
+	Sprite *player_2_itemHolder_2;
 	
-	Sprite *player_1_leftItemButton;
-	Sprite *player_1_rightItemButton;
-	Sprite *player_2_leftItemButton;
-	Sprite *player_2_rightItemButton;
+	Sprite *player_1_itemButton_1;
+	Sprite *player_1_itemButton_2;
+	Sprite *player_2_itemButton_1;
+	Sprite *player_2_itemButton_2;
 
-	MenuItem *menuButton;
-	Menu *menu;
+	//MenuItem *menuButton;
+	//Menu *menu;
 
-	Sprite *player1Icon;
-	Sprite *player2Icon;
+	//Sprite *player1Icon;
+	//Sprite *player2Icon;
 
 	Sprite *hpBar1;
 	Sprite *hpBar2;

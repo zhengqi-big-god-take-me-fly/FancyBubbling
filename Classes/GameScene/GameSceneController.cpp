@@ -23,7 +23,7 @@ bool GameSceneController::initWithPhysics() {
     }
 
     // View initialization
-    view = GameSceneView::create(this);
+    view = GameSceneView::create(this, getPhysicsWorld());
     addChild(view);
 
     // Model initialization

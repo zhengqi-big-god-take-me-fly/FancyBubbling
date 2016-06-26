@@ -8,8 +8,8 @@ USING_NS_CC;
 
 class BackgroundLayer : public Layer {
 	public:
-		static Scene * createScene();
-		CREATE_FUNC(BackgroundLayer);
+		//static Scene * createScene();
+		CREATE_FUNC(BackgroundLayer)
 		virtual bool init();
 	private:
 		Sprite *backgroundImage;

@@ -8,7 +8,7 @@ USING_NS_CC;
 
 class ObjectsLayer : public Layer {
 public:
-	static Scene * createScene();
+	//static Scene * createScene();
 	//CREATE_FUNC(ObjectsLayer);
 	virtual bool init(PhysicsWorld * world);
 	int getPlayerId(Node * node);
@@ -28,7 +28,7 @@ public:
 	void setPhysicsWorld(PhysicsWorld* world);
 	void addEdge(void);
 private:
-	Sprite *backgroundImage;
+	//Sprite *backgroundImage;
 
 	//Sprite *player1;
 	//Sprite *player2;
@@ -42,8 +42,8 @@ private:
 
 	TMXTiledMap *map;
 
-	Sprite *bubble1;
-	Sprite *bubble2;
+	//Sprite *bubble1;
+	//Sprite *bubble2;
 
 	Vec2 layerAnchor;
 	Vec2 backgroundPos;
@@ -51,7 +51,7 @@ private:
 	Size layerSize;
 
 	Vector<Node *> players;
-	Vector<Node *> avatars;
+	//Vector<Node *> avatars;
 	Vector<Node *> hps;
 	Vector<ProgressTimer *> hpTimers;
 	Vector<SpriteFrame*> p1_left;

@@ -3,15 +3,15 @@
 
 void ObjectsLayer::setPhysicsWorld(PhysicsWorld* world) { myWorld = world; }
 
-Scene * ObjectsLayer::createScene() {
-	auto scene = Scene::createWithPhysics();
-	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-	scene->getPhysicsWorld()->setGravity(Point(0, 0));
-
-	auto layer = ObjectsLayer::create(scene->getPhysicsWorld());
-	scene->addChild(layer);
-	return scene;
-}
+//Scene * ObjectsLayer::createScene() {
+//	auto scene = Scene::createWithPhysics();
+//	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+//	scene->getPhysicsWorld()->setGravity(Point(0, 0));
+//
+//	auto layer = ObjectsLayer::create(scene->getPhysicsWorld());
+//	scene->addChild(layer);
+//	return scene;
+//}
 
 bool ObjectsLayer::init(PhysicsWorld* world) {
 	if (!Layer::init()) {
@@ -22,14 +22,14 @@ bool ObjectsLayer::init(PhysicsWorld* world) {
 	layerSize = Director::getInstance()->getVisibleSize();
 
 	// Playing Background
-	backgroundImage = Sprite::create("res/game-area-background.png");
+	//backgroundImage = Sprite::create("res/game-area-background.png");
 	addEdge();
 
 	for (int i = 0; i < 2; i++) {
-		players.pushBack(NULL);
-		hps.pushBack(NULL);
-		avatars.pushBack(NULL);
-		hpTimers.pushBack(NULL);
+		//players.pushBack(NULL);
+		//hps.pushBack(NULL);
+		//avatars.pushBack(NULL);
+		//hpTimers.pushBack(NULL);
 	}
 
 	//player1->setPhysicsBody(PhysicsBody::createCircle(player1->getContentSize().height / 2));
@@ -43,11 +43,11 @@ bool ObjectsLayer::init(PhysicsWorld* world) {
 	//player2->setPosition(player2_pos);
 
 
-	Size t = backgroundImage->getContentSize();
-	backgroundImage->setScale((layerSize.width / t.width) * (layerSize.height / t.height));
-	backgroundImage->setPosition(origin.x + layerSize.width / 2, origin.y + layerSize.height / 2);
+	//Size t = backgroundImage->getContentSize();
+	//backgroundImage->setScale((layerSize.width / t.width) * (layerSize.height / t.height));
+	//backgroundImage->setPosition(origin.x + layerSize.width / 2, origin.y + layerSize.height / 2);
 
-	addChild(backgroundImage);
+	//addChild(backgroundImage);
 
 	playerCount = 0;
 
@@ -57,7 +57,7 @@ bool ObjectsLayer::init(PhysicsWorld* world) {
 int ObjectsLayer::getPlayerId(Node * node)
 {
 	int r = 0;
-	for (int i = 0; i < players.size; i++) {
+	for (int i = 0; i < players.size(); i++) {
 		if (players.at(i) == node) {
 			r = i;
 			break;
@@ -79,7 +79,7 @@ ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world) {
 
 Vec2 ObjectsLayer::getGridPosition(Node * node)
 {
-	if (node == NULL) return;
+    if (node == NULL) return Vec2(-1, -1);
 	int x, y;
 	Vec2 worldPos = convertToWorldSpace(node->getPosition());
 	x = (worldPos.x - 180) / 40;
@@ -127,7 +127,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 	//char *con;
 	//itoa(index, con, 10);
 
-	if (playerCount >= 2 || index < 0 || index > 2 || index > players.size) return;
+	if (playerCount >= 2 || index < 0 || index > 2 || index > players.size()) return;
 	if (index == 1) {
 		auto texture = Director::getInstance()->getTextureCache()->addImage("res/player-1.png");
 		auto frame0 = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
@@ -171,14 +171,14 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 
 void ObjectsLayer::setAvatar(int p, const char * filename)
 {
-	if (p < 0 || p > 2 || p > avatars.size) return;
-	if (avatars.size > 2) return;
-	avatars.replace(p, Sprite::create(filename));
+	//if (p < 0 || p > 2 || p > avatars.size()) return;
+	//if (avatars.size() > 2) return;
+	//avatars.replace(p, Sprite::create(filename));
 }
 
 void ObjectsLayer::setHP(int p, int hp, int maxHp)
 {
-	if (p < 0 || p > 2 || p > hps.size) return;
+	if (p < 0 || p > 2 || p > hps.size()) return;
 	if (hps.at(p) == NULL) {
 		Sprite *myHP = Sprite::create("res/hp-foreground.png", CC_RECT_PIXELS_TO_POINTS(Rect(28, 56, 12, 454)));
 		hps.replace(p, myHP);
@@ -209,7 +209,7 @@ void ObjectsLayer::notifyReady(const char * text, float time)
 	notifyText = Label::createWithTTF(text, "fonts/Marker Felt.ttf", 40);
 	notifyText->setOpacity(1);
 	notifyText->setPosition(convertToNodeSpace(Vec2(layerSize.width / 2, layerSize.height / 2)));
-	scheduleOnce(schedule_selector(deprecateLabel), time);
+	scheduleOnce(schedule_selector(ObjectsLayer::deprecateLabel), time);
 }
 
 
