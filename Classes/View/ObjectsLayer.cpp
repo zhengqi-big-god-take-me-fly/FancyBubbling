@@ -70,6 +70,8 @@ Vec2 ObjectsLayer::getGridPosition(Node * node)
 	return Vec2(15 - 1 - x , 13 - 1 - y);
 }
 
+
+
 Vec2 ObjectsLayer::getPlayerGridPosition(int p)
 {
 	if (0 <= p && p < 2) {
@@ -102,7 +104,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 		auto texture = Director::getInstance()->getTextureCache()->addImage("player-1.png");
 		auto frame0 = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
 		players.insert(1 ,Sprite::createWithSpriteFrame(frame0));
-
+		setGridPosition(players.at(1), x, y);
 		p2_left.reserve(6);
 		for (int i = 3; i < 9; i++) {
 			auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4) , 64 * (i / 4), 40, 64)));
@@ -119,7 +121,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 		auto texture2 = Director::getInstance()->getTextureCache()->addImage("player-0.png");
 		auto frame1 = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
 		players.insert(0, Sprite::createWithSpriteFrame(frame1));
-
+		setGridPosition(players.at(0), x, y);
 		p1_left.reserve(6);
 		for (int i = 3; i < 9; i++) {
 			auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
@@ -131,7 +133,9 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 			auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
 			p1_right.pushBack(frame);
 		}
+
 	}
+
 }
 
 void ObjectsLayer::setAvatar(int p, const char * filename)
@@ -158,7 +162,27 @@ void ObjectsLayer::setPlayerVelocity(int p, Vec2 v)
 
 void ObjectsLayer::notifyReady(const char * text, float time)
 {
+	notifyText = Label::createWithTTF(text, "fonts/Marker Felt.ttf", 40);
+	notifyText->setOpacity(1);
+	notifyText->setPosition(convertToNodeSpace(Vec2(layerSize.width / 2, layerSize.height / 2)));
+	scheduleOnce(schedule_selector(deprecateLabel), time);
+}
 
+
+
+void ObjectsLayer::setGridPosition(Node *dest , int x , int y)
+{
+	if (x < 0 || x > 14 || y < 0 || y > 13) return;
+	
+	Vec2 absolutePosition = Vec2((15 - x) * 40, (13 - y) * 40);
+	Vec2 thisLayerPosition = convertToNodeSpace(absolutePosition);
+	dest->setPosition(thisLayerPosition);
+}
+
+void ObjectsLayer::deprecateLabel(float time)
+{
+	notifyText->setOpacity(0);
+	notifyText->removeFromParentAndCleanup(true);
 }
 
 
