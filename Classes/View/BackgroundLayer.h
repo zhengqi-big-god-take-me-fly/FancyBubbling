@@ -13,6 +13,7 @@ class BackgroundLayer : public Layer {
 		virtual bool init();
 	private:
 		Sprite *backgroundImage;
+		Sprite *uiBackground;
 		Vec2 layerAnchor;
 		Vec2 backgroundPos;
 		Vec2 origin;

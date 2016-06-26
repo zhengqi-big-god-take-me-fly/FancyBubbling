@@ -20,8 +20,16 @@ bool BackgroundLayer::init() {
 	backgroundImage->setScale((layerSize.width / t.width) * (layerSize.height / t.height));
 	backgroundImage->setPosition(origin.x + layerSize.width / 2, origin.y + layerSize.height / 2);
 	
-	addChild(backgroundImage);
+	uiBackground = Sprite::create("game-ui-background.png");
+	Size uiSize = uiBackground->getContentSize();
+	//uiBackground->setScaleX((layerSize.width / uiSize.width) * 0.7);
+	//uiBackground->setScaleY((layerSize.height / uiSize.height) * 0.8);
+	uiBackground->setContentSize(Size(600, 520));
+	uiBackground->setPosition(origin.x + layerSize.width / 2 - uiBackground->getContentSize().width / 2 
+						, origin.y + 80);
 
+	addChild(backgroundImage);
+	addChild(uiBackground);
 	return true;
 }
 
