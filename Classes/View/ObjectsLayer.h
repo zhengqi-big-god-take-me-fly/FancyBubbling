@@ -9,9 +9,10 @@ USING_NS_CC;
 class ObjectsLayer : public Layer {
 public:
 	static Scene * createScene();
-	CREATE_FUNC(ObjectsLayer);
-	virtual bool init();
+	//CREATE_FUNC(ObjectsLayer);
+	virtual bool init(PhysicsWorld * world);
 	int getPlayerId(Node * node);
+	static ObjectsLayer * create(PhysicsWorld * world);
 	Vec2 getGridPosition(Node * node);
 	Vec2 getPlayerGridPosition(int p);
 	void removeNode(Node * node);
@@ -24,6 +25,8 @@ public:
 	void notifyReady(const char * text, float time = 1);
 	void setGridPosition(Node *dest , int x, int y);
 	void deprecateLabel(float time);
+	void setPhysicsWorld(PhysicsWorld* world);
+	void addEdge(void);
 private:
 	Sprite *backgroundImage;
 
@@ -32,6 +35,9 @@ private:
 	int playerCount;
 	Vec2 player1_pos;
 	Vec2 player2_pos;
+
+	PhysicsWorld *myWorld;
+	Sprite *edge;
 
 
 	TMXTiledMap *map;

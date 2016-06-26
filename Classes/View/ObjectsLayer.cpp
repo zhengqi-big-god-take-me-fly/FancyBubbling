@@ -1,22 +1,29 @@
 #include "ObjectsLayer.h"
 #include <string>
+
+void ObjectsLayer::setPhysicsWorld(PhysicsWorld* world) { myWorld = world; }
+
 Scene * ObjectsLayer::createScene() {
-	auto scene = Scene::create();
-	auto layer = ObjectsLayer::create();
+	auto scene = Scene::createWithPhysics();
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	scene->getPhysicsWorld()->setGravity(Point(0, 0));
+
+	auto layer = ObjectsLayer::create(scene->getPhysicsWorld());
 	scene->addChild(layer);
 	return scene;
 }
 
-bool ObjectsLayer::init() {
+bool ObjectsLayer::init(PhysicsWorld* world) {
 	if (!Layer::init()) {
 		return false;
 	}
-
+	this->setPhysicsWorld(world);
 	origin = Director::getInstance()->getVisibleOrigin();
 	layerSize = Director::getInstance()->getVisibleSize();
 
 	// Playing Background
 	backgroundImage = Sprite::create("res/game-area-background.png");
+	addEdge();
 
 	for (int i = 0; i < 2; i++) {
 		players.pushBack(NULL);
@@ -57,6 +64,17 @@ int ObjectsLayer::getPlayerId(Node * node)
 		}
 	}
 	return r;
+}
+
+ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world) {
+	ObjectsLayer* pRet = new(std::nothrow) ObjectsLayer();
+	if (pRet && pRet->init(world)) {
+		pRet->autorelease();
+		return pRet;
+	}
+	delete pRet;
+	pRet = NULL;
+	return NULL;
 }
 
 Vec2 ObjectsLayer::getGridPosition(Node * node)
@@ -115,6 +133,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 		auto frame0 = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
 		players.replace(1, Sprite::createWithSpriteFrame(frame0));
 		setGridPosition(players.at(1), x, y);
+		players.at(1)->setPhysicsBody(PhysicsBody::createCircle(32));
 		p2_left.reserve(6);
 		for (int i = 3; i < 9; i++) {
 			auto frame = SpriteFrame::createWithTexture(texture, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4) , 64 * (i / 4), 40, 64)));
@@ -133,6 +152,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 		auto frame1 = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(0, 0, 40, 64)));
 		players.replace(0, Sprite::createWithSpriteFrame(frame1));
 		setGridPosition(players.at(0), x, y);
+		players.at(0)->setPhysicsBody(PhysicsBody::createCircle(32));
 		p1_left.reserve(6);
 		for (int i = 3; i < 9; i++) {
 			auto frame = SpriteFrame::createWithTexture(texture2, CC_RECT_PIXELS_TO_POINTS(Rect(40 * (i % 4), 64 * (i / 4), 40, 64)));
@@ -175,11 +195,12 @@ void ObjectsLayer::setHP(int p, int hp, int maxHp)
 
 void ObjectsLayer::setPropsCount(int p, int i, int c)
 {
-
+	//Not implemented Yet
 }
 
 void ObjectsLayer::setPlayerVelocity(int p, Vec2 v)
 {
+	//Not implemented Yet
 
 }
 
@@ -209,9 +230,17 @@ void ObjectsLayer::deprecateLabel(float time)
 	notifyText = NULL;
 }
 
+void ObjectsLayer::addEdge(void)
+{
+	edge = Sprite::create();
+	auto bound = PhysicsBody::createEdgeBox(layerSize);
+	bound->setDynamic(false);
+	bound->setTag(0);
 
-
-
+	edge->setPosition(Point(layerSize.width / 2 , layerSize.height / 2));
+	edge->setPhysicsBody(bound);
+	addChild(edge);
+}
 
 
 
