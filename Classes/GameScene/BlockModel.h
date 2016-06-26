@@ -16,21 +16,16 @@ public :
     
     static BlockModel * create(const std::string & key);
     
-    static void loadConfigFile(const std::string & path);
-    
     CC_SYNTHESIZE(Vec2, _position, Position);
     CC_SYNTHESIZE(Texture2D *, _texture, Texture);
     CC_SYNTHESIZE_READONLY(std::string, _key, Key);
     
-    bool isBreakable() const;
-    bool isBlockWave() const;
+    CC_SYNTHESIZE(bool, _breakable, Breakable);
+    CC_SYNTHESIZE(bool, _blockWave, BlockWave);
     
 protected :
     
     static std::map<std::string, BlockModel> _registPool;
-    
-    bool _breakable;
-    bool _blockWave;
 };
 
 #endif /* __BLOCK_MODEL_H__ */

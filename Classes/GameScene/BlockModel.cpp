@@ -26,11 +26,3 @@ BlockModel * BlockModel::create(const std::string & key) {
     }
     return nullptr;
 }
-
-bool BlockModel::isBreakable() const {
-    return _breakable;
-}
-
-bool BlockModel::isBlockWave() const {
-    return _blockWave;
-}
