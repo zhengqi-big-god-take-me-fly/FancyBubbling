@@ -189,23 +189,25 @@ void GameSceneController::loadMap(const std::string & mapName) {
     model->readConfigFromFile("maps/" + mapName + ".json");
     view->useMap(("maps/" + mapName + ".tmx").c_str());
     for (unsigned x = 0; x < model->map.size(); ++x) {
-        for (unsigned y = 0; y < model->map[y].size(); ++y) {
+        for (int y = 0; y < model->map[x].size(); ++y) {
             if (model->getMap(x, y) != nullptr && model->getMap(x, y)->getKey().compare("empty") != 0) {
                 auto body = PhysicsBody::createBox(Size(40, 40));
+                body->setDynamic(false);
                 body->setGroup(model->getMap(x, y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
                 body->setCategoryBitmask(model->getMap(x, y)->getBreakable() ? 2 : 4);          // 000010 : 000100
                 body->setCollisionBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);         // 000001 : 000001
                 body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);       // 000001 : 000001
-            //view->configPhysics(x, y, body);
+                view->configPhysics(x, y, body);
             }
         }
     }
     auto edgeBody = PhysicsBody::createEdgeBox(Size(600, 520));
+    edgeBody->setDynamic(false);
     edgeBody->setGroup(GROUP_WALL);
     edgeBody->setCategoryBitmask(4);    // 000100
     edgeBody->setCollisionBitmask(1);   // 000001
     edgeBody->setContactTestBitmask(1); // 000001
-    //view->configEdgePhysics(edgeBody);
+    view->configEdgePhysics(edgeBody);
 }
 
 bool GameSceneController::playerPresolve(Node * player) {
@@ -315,16 +317,16 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
     }
     switch (code) {
     // Player0
-    case EventKeyboard::KeyCode::KEY_E:
+    case EventKeyboard::KeyCode::KEY_W:
         changePlayerDirection(0, PlayerModel::Direction::up);
         break;
-    case EventKeyboard::KeyCode::KEY_D:
+    case EventKeyboard::KeyCode::KEY_S:
         changePlayerDirection(0, PlayerModel::Direction::down);
         break;
-    case EventKeyboard::KeyCode::KEY_S:
+    case EventKeyboard::KeyCode::KEY_A:
         changePlayerDirection(0, PlayerModel::Direction::left);
         break;
-    case EventKeyboard::KeyCode::KEY_F:
+    case EventKeyboard::KeyCode::KEY_D:
         changePlayerDirection(0, PlayerModel::Direction::right);
         break;
     case EventKeyboard::KeyCode::KEY_LEFT_SHIFT:
@@ -333,7 +335,7 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
     case EventKeyboard::KeyCode::KEY_Q:
         useProps(0, KEY_MEDICINE);
         break;
-    case EventKeyboard::KeyCode::KEY_R:
+    case EventKeyboard::KeyCode::KEY_E:
         useProps(0, KEY_SHIELD);
         break;
     // Player1
@@ -374,19 +376,19 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
 void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Event * e) {
     switch (code) {
     // Player0
-    case EventKeyboard::KeyCode::KEY_E:
+    case EventKeyboard::KeyCode::KEY_W:
         if (model->players.at(0)->getDirection() == PlayerModel::Direction::up)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
-    case EventKeyboard::KeyCode::KEY_D:
+    case EventKeyboard::KeyCode::KEY_S:
         if (model->players.at(0)->getDirection() == PlayerModel::Direction::down)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
-    case EventKeyboard::KeyCode::KEY_S:
+    case EventKeyboard::KeyCode::KEY_A:
         if (model->players.at(0)->getDirection() == PlayerModel::Direction::left)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;
-    case EventKeyboard::KeyCode::KEY_F:
+    case EventKeyboard::KeyCode::KEY_D:
         if (model->players.at(0)->getDirection() == PlayerModel::Direction::right)
             changePlayerDirection(0, PlayerModel::Direction::still);
         break;

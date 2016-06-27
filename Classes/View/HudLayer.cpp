@@ -1,12 +1,5 @@
 #include "HudLayer.h"
 
-//Scene * HudLayer::createScene() {
-//    auto scene = Scene::create();
-//    auto layer = HudLayer::create();
-//    scene->addChild(layer);
-//    return scene;
-//}
-
 bool HudLayer::init() {
     if (!Layer::init()) {
         return false;
@@ -26,7 +19,6 @@ bool HudLayer::init() {
     addChild(backgroundImage);*/
 
     player_1_itemHolder_1 = Sprite::create("game-props-box.png");
-    //player_1_leftItemHolder->setContentSize(Size(72,144));
     player_1_itemHolder_1->setAnchorPoint(Vec2(0, 0));
     player_1_itemHolder_1->setPosition(origin.x + 58, origin.y + 356);
     addChild(player_1_itemHolder_1);
@@ -34,14 +26,12 @@ bool HudLayer::init() {
 
 
     player_1_itemHolder_2 = Sprite::create("game-props-box.png");
-    //player_1_rightItemHolder->setContentSize(Size(72, 144));
     player_1_itemHolder_2->setAnchorPoint(Vec2(0, 0));
     player_1_itemHolder_2->setPosition(origin.x + 60, origin.y + 188);
     addChild(player_1_itemHolder_2);
 
 
     player_2_itemHolder_1 = Sprite::create("game-props-box.png");
-    //player_2_leftItemHolder->setContentSize(Size(72, 144));
     player_2_itemHolder_1->setAnchorPoint(Vec2(1, 0));
     player_2_itemHolder_1->setPosition(origin.x + layerSize.width - 58, origin.y + 188);
     addChild(player_2_itemHolder_1);
@@ -56,14 +46,6 @@ bool HudLayer::init() {
     //player_1_rightItemButton;
     //player_2_leftItemButton;
     //player_2_rightItemButton;
-
-    //deprecated
-    /*menuButton = MenuItemImage::create(
-    "game-menu-button-normal.png",
-    "game-menu-button-pressed.png",
-    CC_CALLBACK_1(HudLayer::menuCloseCallback, this));
-    menuButton -> setPosition(Vec2(origin.x + layerSize.width - menuButton->getContentSize().width / 2,
-    origin.y + menuButton->getContentSize().height / 2));*/
 
     avatar1 = Sprite::create("avatar-0.png");
     avatar1->setAnchorPoint(Vec2(0, 0));
@@ -85,7 +67,7 @@ bool HudLayer::init() {
     hpBar2->setPosition(origin.x + layerSize.width - 24, origin.y + layerSize.height - 16);
     addChild(hpBar2);
 
-    warningMessage = Label::createWithTTF("Press Esc To open Menu", "fonts/Marker Felt.ttf", 20, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+    warningMessage = Label::createWithTTF("按Esc键打开菜单", "fonts/theme-font.ttf", 20, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
     warningMessage->setPosition(origin.x + layerSize.width / 2, origin.y + 28);
     addChild(warningMessage);
 

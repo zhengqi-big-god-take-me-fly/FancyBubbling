@@ -112,8 +112,8 @@ Vec2 ObjectsLayer::getPlayerGridPosition(int p)
 
 void ObjectsLayer::removeNode(Node * node)
 {
-	if (node == NULL) return;
-	this->removeFromParentAndCleanup(node);
+	if (node == nullptr) return;
+    node->removeFromParent();
 }
 
 void ObjectsLayer::useMap(const char * filename)
@@ -170,7 +170,6 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 	//	playerCount++;
 	//}
 
-    // TODO: Add filename.plist to sprite frame cache
     // Add resource to cache
     auto sfc = SpriteFrameCache::getInstance();
     if (sfc->isSpriteFramesWithFileLoaded(std::string(filename) + ".plist") == false) {
@@ -216,13 +215,13 @@ void ObjectsLayer::setPlayerVelocity(int p, Vec2 v)
 
 void ObjectsLayer::notifyReady(const char * text, float time)
 {
-	notifyText = Label::createWithTTF(text, "fonts/theme-font.ttf", 40, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+	auto notifyText = Label::createWithTTF(text, "fonts/theme-font.ttf", 64, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
 	notifyText->setPosition(layerSize.width / 2, layerSize.height / 2);
+    notifyText->runAction(Sequence::createWithTwoActions(ScaleTo::create(time, 1), CallFuncN::create([](Node * node) {
+        node->removeFromParent();
+    })));
     addChild(notifyText, 4);
-	scheduleOnce(schedule_selector(ObjectsLayer::deprecateLabel), time);
 }
-
-
 
 void ObjectsLayer::setGridPosition(Node *dest , int x , int y)
 {
@@ -233,20 +232,29 @@ void ObjectsLayer::setGridPosition(Node *dest , int x , int y)
 	dest->setPosition(thisLayerPosition);
 }
 
-void ObjectsLayer::deprecateLabel(float time)
-{
-	notifyText->removeFromParentAndCleanup(true);
-	notifyText = nullptr;
-}
-
 void ObjectsLayer::addEdge(void)
 {
-	auto bound = PhysicsBody::createEdgeBox(Size(600, 520));
-	bound->setDynamic(false);
-	bound->setTag(0);
+	//auto bound = PhysicsBody::createEdgeBox(Size(600, 520));
+	//bound->setDynamic(false);
+	//bound->setTag(0);
 
 	edge = Sprite::create();
 	edge->setPosition(Point(layerSize.width / 2 , 340));
-	edge->setPhysicsBody(bound);
+	//edge->setPhysicsBody(bound);
 	addChild(edge);
+}
+
+void ObjectsLayer::configPhysics(int x, int y, PhysicsBody * body) {
+    auto sprite = getTile(x, y);
+    sprite->setPhysicsBody(body);
+}
+
+void ObjectsLayer::configEdgePhysics(PhysicsBody * body) {
+    edge->setPhysicsBody(body);
+}
+
+Node * ObjectsLayer::getTile(int x, int y) {
+    char layerName[128];
+    sprintf(layerName, "Row%d", y);
+    return map->getLayer(layerName)->getTileAt(Vec2(x, y));
 }

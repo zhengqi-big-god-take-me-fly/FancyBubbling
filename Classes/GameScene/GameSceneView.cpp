@@ -70,6 +70,25 @@ void GameSceneView::notifyReady(const char * text, float time) {
     objectsLayer->notifyReady(text, time);
 }
 
-void GameSceneView::showPauseScreen() {}
+void GameSceneView::showPauseScreen() {
+    auto vo = Director::getInstance()->getVisibleOrigin();
+    auto vs = Director::getInstance()->getVisibleSize();
+    pauseScreen = Sprite::create("pause-screen.png");
+    pauseScreen->setPosition(vo.x + vs.width / 2, vo.y + vs.height / 2);
+    addChild(pauseScreen, 5);
+}
 
-void GameSceneView::hidePauseScreen() {}
+void GameSceneView::hidePauseScreen() {
+    if (pauseScreen != nullptr) {
+        pauseScreen->removeFromParent();
+        pauseScreen = nullptr;
+    }
+}
+
+void GameSceneView::configPhysics(int x, int y, PhysicsBody * body) {
+    objectsLayer->configPhysics(x, y, body);
+}
+
+void GameSceneView::configEdgePhysics(PhysicsBody * body) {
+    objectsLayer->configEdgePhysics(body);
+}

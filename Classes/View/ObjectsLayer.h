@@ -22,9 +22,11 @@ public:
 	void setPlayerVelocity(int p, Vec2 v);
 	void notifyReady(const char * text, float time = 1);
 	void setGridPosition(Node *dest , int x, int y);
-	void deprecateLabel(float time);
+	//void deprecateLabel(float time);
 	void setPhysicsWorld(PhysicsWorld* world);
 	void addEdge(void);
+    void configPhysics(int x, int y, PhysicsBody * body);
+    void configEdgePhysics(PhysicsBody * body);
 private:
 	int playerCount;
 	Vec2 player1_pos;
@@ -53,6 +55,8 @@ private:
 
     // Constancts
     Vec2 InvalidGridPosition = Vec2(-1, -1);
+
+    Node * getTile(int x, int y);
 };
 
 #endif // !__OBJECTS_LAYER_H__
