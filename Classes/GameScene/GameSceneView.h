@@ -34,8 +34,10 @@ public:
     //void addEdge();
     void showPauseScreen();
     void hidePauseScreen();
-    void configPhysics(int x, int y, PhysicsBody * body);
+    void configTilePhysics(int x, int y, PhysicsBody * body);
+    void configPlayerPhysics(int p, PhysicsBody * body);
     void configEdgePhysics(PhysicsBody * body);
+    void updatePlayerZ();
 private:
     GameSceneControllerDelegate * controller;
     BackgroundLayer * backgroundLayer;

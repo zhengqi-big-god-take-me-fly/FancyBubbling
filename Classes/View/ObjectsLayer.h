@@ -25,8 +25,10 @@ public:
 	//void deprecateLabel(float time);
 	void setPhysicsWorld(PhysicsWorld* world);
 	void addEdge(void);
-    void configPhysics(int x, int y, PhysicsBody * body);
+    void configTilePhysics(int x, int y, PhysicsBody * body);
+    void configPlayerPhysics(int p, PhysicsBody * body);
     void configEdgePhysics(PhysicsBody * body);
+    void updatePlayerZ();
 private:
 	int playerCount;
 	Vec2 player1_pos;

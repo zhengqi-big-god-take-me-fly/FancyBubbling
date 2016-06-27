@@ -85,10 +85,18 @@ void GameSceneView::hidePauseScreen() {
     }
 }
 
-void GameSceneView::configPhysics(int x, int y, PhysicsBody * body) {
-    objectsLayer->configPhysics(x, y, body);
+void GameSceneView::configTilePhysics(int x, int y, PhysicsBody * body) {
+    objectsLayer->configTilePhysics(x, y, body);
+}
+
+void GameSceneView::configPlayerPhysics(int p, PhysicsBody * body) {
+    objectsLayer->configPlayerPhysics(p, body);
 }
 
 void GameSceneView::configEdgePhysics(PhysicsBody * body) {
     objectsLayer->configEdgePhysics(body);
+}
+
+void GameSceneView::updatePlayerZ() {
+    objectsLayer->updatePlayerZ();
 }

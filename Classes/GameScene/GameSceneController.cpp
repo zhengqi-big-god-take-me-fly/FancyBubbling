@@ -46,10 +46,13 @@ bool GameSceneController::initWithPhysics() {
 
     gameReady();
 
+    scheduleUpdate();
+
     return true;
 }
 
 void GameSceneController::onExit() {
+    unscheduleUpdate();
     _eventDispatcher->removeEventListener(keyboardListener);
     _eventDispatcher->removeEventListener(spritePhysicsListener);
     model->release();
@@ -57,6 +60,7 @@ void GameSceneController::onExit() {
 }
 
 void GameSceneController::update(float delta) {
+    view->updatePlayerZ();
 }
 
 void GameSceneController::bubbleExplode(Node * node) {
@@ -83,6 +87,7 @@ bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
 
     // Player and block
     if (isPlayerAndBody(gra, grb)) {
+        CCLOG("PLAYER and BDDY");
         return true;
     }
     
@@ -149,7 +154,21 @@ void GameSceneController::gameReady() {
     p2->setSpeed(80);
     model->players.pushBack(p2);
     view->addPlayer(0, 0, 0, "player-0");
+    auto body0 = PhysicsBody::createCircle(18);
+    body0->setGroup(GROUP_PLAYER);
+    body0->setCategoryBitmask(1);                       // 000001
+    body0->setCollisionBitmask(2 + 4 + 8);              // 001110
+    body0->setContactTestBitmask(2 + 4 + 8 + 16 + 32);  // 111110
+    body0->setRotationEnable(false);
+    view->configPlayerPhysics(0, body0);
     view->addPlayer(1, 14, 12, "player-1");
+    auto body1 = PhysicsBody::createCircle(18);
+    body1->setGroup(GROUP_PLAYER);
+    body1->setCategoryBitmask(1);                       // 000001
+    body1->setCollisionBitmask(2 + 4 + 8);              // 001110
+    body1->setContactTestBitmask(2 + 4 + 8 + 16 + 32);  // 111110
+    body1->setRotationEnable(false);
+    view->configPlayerPhysics(1, body1);
 
     // Load hud
     //view->setHP(0, model->players[0]->getHP(), model->players[0]->getMaxHP());
@@ -188,16 +207,16 @@ void GameSceneController::gameExit() {
 void GameSceneController::loadMap(const std::string & mapName) {
     model->readConfigFromFile("maps/" + mapName + ".json");
     view->useMap(("maps/" + mapName + ".tmx").c_str());
-    for (unsigned x = 0; x < model->map.size(); ++x) {
-        for (int y = 0; y < model->map[x].size(); ++y) {
+    for (unsigned x = 0; x < model->getMapSize().width; ++x) {
+        for (int y = 0; y < model->getMapSize().height; ++y) {
             if (model->getMap(x, y) != nullptr && model->getMap(x, y)->getKey().compare("empty") != 0) {
                 auto body = PhysicsBody::createBox(Size(40, 40));
                 body->setDynamic(false);
                 body->setGroup(model->getMap(x, y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
                 body->setCategoryBitmask(model->getMap(x, y)->getBreakable() ? 2 : 4);          // 000010 : 000100
                 body->setCollisionBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);         // 000001 : 000001
-                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);       // 000001 : 000001
-                view->configPhysics(x, y, body);
+                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 + 16 : 1);  // 010001 : 000001
+                view->configTilePhysics(x, y, body);
             }
         }
     }

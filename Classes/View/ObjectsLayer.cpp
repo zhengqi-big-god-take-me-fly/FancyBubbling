@@ -181,7 +181,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
     sprintf(frameName, "%s-%s-%d.png", filename, "down", 0);
     auto player = Sprite::createWithSpriteFrameName(frameName);
     setGridPosition(player, x, y);
-    player->setPhysicsBody(PhysicsBody::createCircle(20));
+    //player->setPhysicsBody(PhysicsBody::createCircle(20));
     map->addChild(player);
     players.insert(std::make_pair(index, player));
 }
@@ -244,13 +244,25 @@ void ObjectsLayer::addEdge(void)
 	addChild(edge);
 }
 
-void ObjectsLayer::configPhysics(int x, int y, PhysicsBody * body) {
+void ObjectsLayer::configTilePhysics(int x, int y, PhysicsBody * body) {
     auto sprite = getTile(x, y);
     sprite->setPhysicsBody(body);
 }
 
+void ObjectsLayer::configPlayerPhysics(int p, PhysicsBody * body) {
+    players.at(p)->setPhysicsBody(body);
+}
+
 void ObjectsLayer::configEdgePhysics(PhysicsBody * body) {
     edge->setPhysicsBody(body);
+}
+
+void ObjectsLayer::updatePlayerZ() {
+    char layerName[128];
+    for (std::map<int, Node *>::iterator it = players.begin(); it != players.end(); ++it) {
+        sprintf(layerName, "Row%d", (int)getPlayerGridPosition(it->first).y);
+        it->second->setLocalZOrder(map->getLayer(layerName)->getLocalZOrder());
+    }
 }
 
 Node * ObjectsLayer::getTile(int x, int y) {
