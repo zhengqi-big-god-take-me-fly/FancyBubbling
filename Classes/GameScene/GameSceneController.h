@@ -30,14 +30,13 @@ public:
     // Inherited from GameSceneControllerDelegate
     virtual void bubbleExplode(Node * node);
 private:
-    // Should be in Model
-    //BlockModel * & getBlock(Vec2 v);
     // Helper functions
     void gameReady();
     void gameStart();
     void gamePause();
     void gameResume();
     void gameExit();
+    void loadMap(const std::string & mapName);
     bool playerPresolve(Node * player);
     void playerSeparate(Node * player);
     bool isPlayerAndBody(int a, int b);

@@ -144,8 +144,7 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
 
 void GameSceneController::gameReady() {
     // Load map
-    model->readConfigFromFile("maps/garden.json");
-    view->useMap("maps/garden.tmx");
+    loadMap("garden");
 
     // Add players
     auto p1 = PlayerModel::create();
@@ -189,6 +188,16 @@ void GameSceneController::gameResume() {
 
 void GameSceneController::gameExit() {
     Director::getInstance()->popScene();
+}
+
+void GameSceneController::loadMap(const std::string & mapName) {
+    model->readConfigFromFile("maps/" + mapName + ".json");
+    view->useMap(("maps/" + mapName + ".tmx").c_str());
+    for (unsigned x = 0; x < model->map.size(); ++x) {
+        for (unsigned y = 0; y < model->map[y].size(); ++y) {
+            //view->configPhysics(x, y, PhysicsBody::createBox(Size(40, 40)), model->map[x].at(y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
+        }
+    }
 }
 
 bool GameSceneController::playerPresolve(Node * player) {
