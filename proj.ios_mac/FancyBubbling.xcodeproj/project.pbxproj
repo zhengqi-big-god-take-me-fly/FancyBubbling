@@ -50,6 +50,12 @@
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
 		A323319E1D1FC115008F14F6 /* maps in Resources */ = {isa = PBXBuildFile; fileRef = A323319D1D1FC115008F14F6 /* maps */; };
 		A323319F1D1FC115008F14F6 /* maps in Resources */ = {isa = PBXBuildFile; fileRef = A323319D1D1FC115008F14F6 /* maps */; };
+		A32331E21D20CBC4008F14F6 /* BackgroundLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32331DC1D20CBC4008F14F6 /* BackgroundLayer.cpp */; };
+		A32331E31D20CBC4008F14F6 /* HudLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32331DE1D20CBC4008F14F6 /* HudLayer.cpp */; };
+		A32331E41D20CBC4008F14F6 /* ObjectsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32331E01D20CBC4008F14F6 /* ObjectsLayer.cpp */; };
+		A32331E51D20CBCA008F14F6 /* BackgroundLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32331DC1D20CBC4008F14F6 /* BackgroundLayer.cpp */; };
+		A32331E61D20CBCC008F14F6 /* HudLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32331DE1D20CBC4008F14F6 /* HudLayer.cpp */; };
+		A32331E71D20CBCF008F14F6 /* ObjectsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32331E01D20CBC4008F14F6 /* ObjectsLayer.cpp */; };
 		A36278C91D085F84007B2EF8 /* BubbleModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36278C71D085F84007B2EF8 /* BubbleModel.cpp */; };
 		A36278CA1D085F84007B2EF8 /* BubbleModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36278C71D085F84007B2EF8 /* BubbleModel.cpp */; };
 		A36278CC1D089B72007B2EF8 /* HomeScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36278CB1D089B72007B2EF8 /* HomeScene.cpp */; };
@@ -126,6 +132,12 @@
 		537A4ADE8BCE60CE31EC2030 /* libcocos2d Mac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libcocos2d Mac.a"; path = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.a"; sourceTree = "<absolute>"; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A323319D1D1FC115008F14F6 /* maps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = maps; sourceTree = "<group>"; };
+		A32331DC1D20CBC4008F14F6 /* BackgroundLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundLayer.cpp; sourceTree = "<group>"; };
+		A32331DD1D20CBC4008F14F6 /* BackgroundLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundLayer.h; sourceTree = "<group>"; };
+		A32331DE1D20CBC4008F14F6 /* HudLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudLayer.cpp; sourceTree = "<group>"; };
+		A32331DF1D20CBC4008F14F6 /* HudLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudLayer.h; sourceTree = "<group>"; };
+		A32331E01D20CBC4008F14F6 /* ObjectsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectsLayer.cpp; sourceTree = "<group>"; };
+		A32331E11D20CBC4008F14F6 /* ObjectsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectsLayer.h; sourceTree = "<group>"; };
 		A36278C71D085F84007B2EF8 /* BubbleModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleModel.cpp; sourceTree = "<group>"; };
 		A36278C81D085F84007B2EF8 /* BubbleModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleModel.h; sourceTree = "<group>"; };
 		A36278CB1D089B72007B2EF8 /* HomeScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HomeScene.cpp; sourceTree = "<group>"; };
@@ -285,6 +297,7 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A32331DB1D20CBC4008F14F6 /* View */,
 				A3E88F9D1D054EA500DA841A /* GameScene */,
 				A3E88FA41D054EA500DA841A /* HomeScene */,
 				A3E88FA71D054EA500DA841A /* Utils */,
@@ -348,6 +361,19 @@
 				537A4ADE8BCE60CE31EC2030 /* libcocos2d Mac.a */,
 			);
 			name = "mac-libs";
+			sourceTree = "<group>";
+		};
+		A32331DB1D20CBC4008F14F6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A32331DC1D20CBC4008F14F6 /* BackgroundLayer.cpp */,
+				A32331DD1D20CBC4008F14F6 /* BackgroundLayer.h */,
+				A32331DE1D20CBC4008F14F6 /* HudLayer.cpp */,
+				A32331DF1D20CBC4008F14F6 /* HudLayer.h */,
+				A32331E01D20CBC4008F14F6 /* ObjectsLayer.cpp */,
+				A32331E11D20CBC4008F14F6 /* ObjectsLayer.h */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		A3E88F9D1D054EA500DA841A /* GameScene */ = {
@@ -503,8 +529,11 @@
 				A36278CC1D089B72007B2EF8 /* HomeScene.cpp in Sources */,
 				A36278C91D085F84007B2EF8 /* BubbleModel.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
+				A32331E41D20CBC4008F14F6 /* ObjectsLayer.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
+				A32331E21D20CBC4008F14F6 /* BackgroundLayer.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
+				A32331E31D20CBC4008F14F6 /* HudLayer.cpp in Sources */,
 				A3E88FBE1D056ABB00DA841A /* ItemModel.cpp in Sources */,
 				A3E88FC51D05BF3500DA841A /* BlockModel.cpp in Sources */,
 				A3E88FB61D0550A400DA841A /* GameSceneModel.cpp in Sources */,
@@ -523,11 +552,14 @@
 				A3E88FB41D054FB500DA841A /* GameSceneView.cpp in Sources */,
 				A36278CA1D085F84007B2EF8 /* BubbleModel.cpp in Sources */,
 				A3E88FB11D054F8B00DA841A /* GameSceneController.cpp in Sources */,
+				A32331E51D20CBCA008F14F6 /* BackgroundLayer.cpp in Sources */,
 				A36278CD1D089B72007B2EF8 /* HomeScene.cpp in Sources */,
 				A3E88FB71D0550A400DA841A /* GameSceneModel.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
+				A32331E71D20CBCF008F14F6 /* ObjectsLayer.cpp in Sources */,
 				A3E88FBB1D05530B00DA841A /* PlayerModel.cpp in Sources */,
+				A32331E61D20CBCC008F14F6 /* HudLayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

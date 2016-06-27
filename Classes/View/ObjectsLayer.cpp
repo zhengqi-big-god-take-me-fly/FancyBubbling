@@ -228,7 +228,7 @@ void ObjectsLayer::setGridPosition(Node *dest , int x , int y)
 {
 	if (x < 0 || x > 14 || y < 0 || y > 13) return;
 	
-	Vec2 absolutePosition = Vec2((15 - x) * 40, (13 - y) * 40);
+	Vec2 absolutePosition = Vec2(x * 40 + 20 , (13 - y - 1) * 40 + 20);
 	Vec2 thisLayerPosition = convertToNodeSpace(absolutePosition);
 	dest->setPosition(thisLayerPosition);
 }
