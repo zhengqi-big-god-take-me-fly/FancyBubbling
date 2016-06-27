@@ -22,7 +22,7 @@ bool GameSceneView::init(GameSceneControllerDelegate * _controller, PhysicsWorld
 
     backgroundLayer = BackgroundLayer::create();
     addChild(backgroundLayer, 0);
-    objectsLayer = ObjectsLayer::create(_world);
+    objectsLayer = ObjectsLayer::create(_world, controller);
     addChild(objectsLayer, 1);
     hudLayer = HudLayer::create();
     addChild(hudLayer, 2);
@@ -99,4 +99,32 @@ void GameSceneView::configEdgePhysics(PhysicsBody * body) {
 
 void GameSceneView::updatePlayerZ() {
     objectsLayer->updatePlayerZ();
+}
+
+void GameSceneView::placeBubble(int x, int y, PhysicsBody * body, float time) {
+    objectsLayer->placeBubble(x, y, body, time);
+}
+
+void GameSceneView::playMovingAnimation(int p, int d) {
+    objectsLayer->playMovingAnimation(p, d);
+}
+
+void GameSceneView::stopMovingAnimation(int p) {
+    objectsLayer->stopMovingAnimation(p);
+}
+
+void GameSceneView::playHurtAnimation(int p) {
+    objectsLayer->playHurtAnimation(p);
+}
+
+void GameSceneView::playerDie(int p) {
+    objectsLayer->playerDie(p);
+}
+
+void GameSceneView::playerProtected(int p, bool protect) {
+    objectsLayer->playerProtected(p, protect);
+}
+
+void GameSceneView::addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body) {
+    objectsLayer->addWave(start, end, show, live, filename, body);
 }

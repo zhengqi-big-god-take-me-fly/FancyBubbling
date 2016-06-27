@@ -1,5 +1,6 @@
 #include "ObjectsLayer.h"
 #include <string>
+#include "../Utils/Utils.h"
 
 void ObjectsLayer::setPhysicsWorld(PhysicsWorld* world) { myWorld = world; }
 
@@ -13,7 +14,7 @@ void ObjectsLayer::setPhysicsWorld(PhysicsWorld* world) { myWorld = world; }
 //	return scene;
 //}
 
-bool ObjectsLayer::init(PhysicsWorld* world) {
+bool ObjectsLayer::init(PhysicsWorld* world, GameSceneControllerDelegate * _controller) {
 	if (!Layer::init()) {
 		return false;
 	}
@@ -22,6 +23,7 @@ bool ObjectsLayer::init(PhysicsWorld* world) {
 	layerSize = Director::getInstance()->getVisibleSize();
 
 	this->setPhysicsWorld(world);
+    controller = _controller;
 
 	addEdge();
 
@@ -72,9 +74,9 @@ int ObjectsLayer::getPlayerId(Node * node)
 
 
 
-ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world) {
+ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world, GameSceneControllerDelegate * _controller) {
 	ObjectsLayer* pRet = new(std::nothrow) ObjectsLayer();
-	if (pRet && pRet->init(world)) {
+	if (pRet && pRet->init(world, _controller)) {
 		pRet->autorelease();
 		return pRet;
 	}
@@ -85,23 +87,24 @@ ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world) {
 
 Vec2 ObjectsLayer::getGridPosition(Node * node)
 {
-    if (node == NULL) return Vec2(-1, -1);
-	int x, y;
-	Vec2 worldPos = convertToWorldSpace(node->getPosition());
-	x = (worldPos.x - 180) / 40;
-	int modx = int(worldPos.x - 180) % 40;
-	y = (worldPos.y - 60) / 40;
-	int mody = int(worldPos.y - 60) % 40;
-	
-	if (modx == 0) x += 1;
-	if (mody == 0) y += 1;
+    if (node == nullptr) return InvalidGridPosition;
+    return Vec2(((int)node->getPositionX()) / 40, 12 - ((int)node->getPositionY()) / 40);
+	//int x, y;
+	//Vec2 worldPos = convertToWorldSpace(node->getPosition());
+	//x = (worldPos.x - 180) / 40;
+	//int modx = int(worldPos.x - 180) % 40;
+	//y = (worldPos.y - 60) / 40;
+	//int mody = int(worldPos.y - 60) % 40;
+	//
+	//if (modx == 0) x += 1;
+	//if (mody == 0) y += 1;
 
-	if (x >= 14) x = 14;
-	if (y >= 12) y = 12;
-	if (x <= 0) x = 0;
-	if (y <= 0) y = 0;
+	//if (x >= 14) x = 14;
+	//if (y >= 12) y = 12;
+	//if (x <= 0) x = 0;
+	//if (y <= 0) y = 0;
 
-	return Vec2(15 - 1 - x , 13 - 1 - y);
+	//return Vec2(15 - 1 - x , 13 - 1 - y);
 }
 
 Vec2 ObjectsLayer::getPlayerGridPosition(int p)
@@ -176,6 +179,10 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
     auto sfc = SpriteFrameCache::getInstance();
     if (sfc->isSpriteFramesWithFileLoaded(std::string(filename) + ".plist") == false) {
         sfc->addSpriteFramesWithFile(std::string(filename) + ".plist");
+        Utils::loadAnimation(std::string(filename) + "-up", std::string(filename) + "-up" + "-%d.png", 0, 3, 1.0f / 10);
+        Utils::loadAnimation(std::string(filename) + "-down", std::string(filename) + "-down" + "-%d.png", 0, 3, 1.0f / 10);
+        Utils::loadAnimation(std::string(filename) + "-left", std::string(filename) + "-left" + "-%d.png", 0, 3, 1.0f / 10);
+        Utils::loadAnimation(std::string(filename) + "-right", std::string(filename) + "-right" + "-%d.png", 0, 3, 1.0f / 10);
     }
 
     // Create sprite
@@ -227,7 +234,7 @@ void ObjectsLayer::notifyReady(const char * text, float time)
 
 void ObjectsLayer::setGridPosition(Node *dest , int x , int y)
 {
-	if (x < 0 || x > 14 || y < 0 || y > 13) return;
+	if (x < 0 || x > 15 || y < 0 || y > 13) return;
 	
 	Vec2 absolutePosition = Vec2(x * 40 + 20 , (13 - y - 1) * 40 + 20);
 	Vec2 thisLayerPosition = convertToNodeSpace(absolutePosition);
@@ -260,16 +267,14 @@ void ObjectsLayer::configEdgePhysics(PhysicsBody * body) {
 }
 
 void ObjectsLayer::updatePlayerZ() {
-    char layerName[128];
     for (std::map<int, Node *>::iterator it = players.begin(); it != players.end(); ++it) {
-        sprintf(layerName, "Row%d", (int)getPlayerGridPosition(it->first).y);
-        it->second->setLocalZOrder(map->getLayer(layerName)->getLocalZOrder());
+        it->second->setLocalZOrder(getZOrderOfRow(getPlayerGridPosition(it->first).y));
     }
 }
 
 void ObjectsLayer::playMovingAnimation(int p, int d) {
-    String direction = "default";
-    char frameName[128];
+    std::string direction = "default";
+    //char frameName[128];
     
     switch (d) {
         case 0:
@@ -288,17 +293,30 @@ void ObjectsLayer::playMovingAnimation(int p, int d) {
             break;
     }
 
-    Vector<SpriteFrame *> caches;
-    for (int i = 0; i < 4; i++) {
-        sprintf(frameName, "player-%d-%s-%d.png", p, direction, i);
-        SpriteFrame* time = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
-        caches.pushBack(time);
-    }
+    //Vector<SpriteFrame *> caches;
+    //for (int i = 0; i < 4; i++) {
+    //    sprintf(frameName, "player-%d-%s-%d.png", p, direction.c_str(), i);
+    //    SpriteFrame* time = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
+    //    caches.pushBack(time);
+    //}
 
-    Animation *anim = Animation::createWithSpriteFrames(caches, 0.5);
-    Animate *ani = Animate::create(anim);
-    ani->setTag(999);
-    players.at(p)->runAction(RepeatForever::create(ani));
+    char aniName[128];
+    //sprintf(aniName, "player-%d", p);
+    //auto sfc = SpriteFrameCache::getInstance();
+    //if (sfc->isSpriteFramesWithFileLoaded(std::string(aniName) + ".plist") == false) {
+    //    sfc->addSpriteFramesWithFile(std::string(aniName) + ".plist");
+    //    Utils::loadAnimation(std::string(aniName) + "-up"   , std::string(aniName) + "-up" + "-%d.png", 0, 3, 1.0f / 10);
+    //    Utils::loadAnimation(std::string(aniName) + "-down" , std::string(aniName) + "-down" + "-%d.png", 0, 3, 1.0f / 10);
+    //    Utils::loadAnimation(std::string(aniName) + "-left" , std::string(aniName) + "-left" + "-%d.png", 0, 3, 1.0f / 10);
+    //    Utils::loadAnimation(std::string(aniName) + "-right", std::string(aniName) + "-right" + "-%d.png", 0, 3, 1.0f / 10);
+    //}
+    sprintf(aniName, "player-%d-%s", p, direction.c_str());
+    Animation *anim = AnimationCache::getInstance()->getAnimation(aniName);
+    auto rp = RepeatForever::create(Animate::create(anim));
+    rp->setTag(999);
+    players.at(p)->runAction(rp);
+
+
 }
 
 void ObjectsLayer::stopMovingAnimation(int p) {
@@ -306,9 +324,9 @@ void ObjectsLayer::stopMovingAnimation(int p) {
 }
 
 void ObjectsLayer::playHurtAnimation(int p) {
-    FiniteTimeAction *fat = TintTo::create(0.1, Color3B(255, 0, 0));
-    FiniteTimeAction *white = TintTo::create(0.1, Color3B(255, 255, 255));
-    FiniteTimeAction *normal = TintBy::create(0.1, 0, 0, 0);
+    FiniteTimeAction *fat = TintTo::create(0.1f, Color3B(255, 0, 0));
+    FiniteTimeAction *white = TintTo::create(0.1f, Color3B(255, 255, 255));
+    FiniteTimeAction *normal = TintBy::create(0.1f, 0, 0, 0);
     
     auto hurt = Sequence::create(fat, normal, white, normal);
     players.at(p)->stopAction(RepeatForever::create(hurt));
@@ -321,11 +339,11 @@ void ObjectsLayer::playerDie(int p) {
 
 void ObjectsLayer::playerProtected(int p, bool protect) {
     // add the file into the animation list;
-    String protection = "";
+    std::string protection = "";
     char frameName[128];
     Vector<SpriteFrame *> caches;
     for (int i = 0; i < 4; i++) {
-        sprintf(frameName, "%s-%d.png" , protection , i);
+        sprintf(frameName, "%s-%d.png" , protection.c_str() , i);
         SpriteFrame* time = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
         caches.pushBack(time);
     }
@@ -361,12 +379,31 @@ void ObjectsLayer::addWave(Vec2 start, Vec2 end, float show, float live, const s
     }
 }
 
+int ObjectsLayer::getZOrderOfRow(int y) {
+    char layerName[128];
+    sprintf(layerName, "Row%d", y);
+    return map->getLayer(layerName)->getLocalZOrder();
+}
 
-void ObjectsLayer::placeBubble(int x, int y) {
-    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("bubble.plist");
-    Sprite *bubble = Sprite::createWithSpriteFrameName("bubble.png");
+//void ObjectsLayer::bubbleScheduler(float delta) {
+//    controller->bubbleExplode((Node *)this);
+//}
+
+
+void ObjectsLayer::placeBubble(int x, int y, PhysicsBody * body, float time) {
+    auto sfc = SpriteFrameCache::getInstance();
+    if (sfc->isSpriteFramesWithFileLoaded("bubble.plist") == false) {
+        sfc->addSpriteFramesWithFile("bubble.plist");
+        Utils::loadAnimation("bubble", "bubble-%d.png", 0, 3, 1.0f / 10);
+    }
+    Sprite * bubble = Sprite::createWithSpriteFrameName("bubble-0.png");
     setGridPosition(bubble, x, y);
-    map->addChild(bubble);
+    bubble->setPhysicsBody(body);
+    bubble->runAction(RepeatForever::create(Animate::create(AnimationCache::getInstance()->getAnimation("bubble"))));
+    bubble->scheduleOnce([bubble, this](float delta) {
+        this->controller->bubbleExplode(bubble);
+    }, time, "bubble");
+    map->addChild(bubble, getZOrderOfRow(y));
 }
 
 void ObjectsLayer::addProps(int x, int y, const std::string & filename) {

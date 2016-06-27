@@ -38,6 +38,13 @@ public:
     void configPlayerPhysics(int p, PhysicsBody * body);
     void configEdgePhysics(PhysicsBody * body);
     void updatePlayerZ();
+    void placeBubble(int x, int y, PhysicsBody * body, float time);
+    void playMovingAnimation(int p, int d);
+    void stopMovingAnimation(int p);
+    void playHurtAnimation(int p);
+    void playerDie(int p);
+    void playerProtected(int p, bool protect);
+    void addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body);
 private:
     GameSceneControllerDelegate * controller;
     BackgroundLayer * backgroundLayer;

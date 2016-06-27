@@ -63,6 +63,9 @@
     <ClCompile Include="..\Classes\View\ObjectsLayer.cpp">
       <Filter>src\View</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Utils\Utils.h">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

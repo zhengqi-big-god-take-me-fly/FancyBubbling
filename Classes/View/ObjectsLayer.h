@@ -3,14 +3,15 @@
 #define __OBJECTS_LAYER_H__
 
 #include "cocos2d.h"
+#include "../GameScene/GameSceneControllerDelegate.h"
 
 USING_NS_CC;
 
 class ObjectsLayer : public Layer {
 public:
-	virtual bool init(PhysicsWorld * world);
+	virtual bool init(PhysicsWorld * world, GameSceneControllerDelegate * _controller);
 	int getPlayerId(Node * node);
-	static ObjectsLayer * create(PhysicsWorld * world);
+	static ObjectsLayer * create(PhysicsWorld * world, GameSceneControllerDelegate * _controller);
 	Vec2 getGridPosition(Node * node);
 	Vec2 getPlayerGridPosition(int p);
 	void removeNode(Node * node);
@@ -28,7 +29,7 @@ public:
     void configTilePhysics(int x, int y, PhysicsBody * body);
     void configPlayerPhysics(int p, PhysicsBody * body);
     void configEdgePhysics(PhysicsBody * body);
-    void placeBubble(int x, int y);
+    void placeBubble(int x, int y, PhysicsBody * body, float time);
     void addProps(int x, int y, const std::string & filename);
     void disposeWave(float dt);
     void updatePlayerZ();
@@ -38,6 +39,8 @@ public:
     void playerDie(int p);
     void playerProtected(int p, bool protect);
     void addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body);
+    int getZOrderOfRow(int y);
+    //void bubbleScheduler(float delta);
 private:
 	int playerCount;
 	Vec2 player1_pos;
@@ -52,6 +55,8 @@ private:
 	Vec2 backgroundPos;
 	Vec2 origin;
 	Size layerSize;
+
+    GameSceneControllerDelegate * controller;
 
 	//Vector<Node *> players;
     std::map<int, Node *> players;

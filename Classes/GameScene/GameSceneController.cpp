@@ -90,7 +90,6 @@ bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
 
     // Player and block
     if (isPlayerAndBody(gra, grb)) {
-        CCLOG("PLAYER and BDDY");
         return true;
     }
     
@@ -142,6 +141,12 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
 
     if (isPlayerAndBody(gra, grb)) {
         playerSeparate(gra == GROUP_PLAYER ? contact.getShapeA()->getBody()->getNode() : contact.getShapeB()->getBody()->getNode());
+        // Fix bubble collision with user
+        if (gra == GROUP_PLAYER && grb == GROUP_BUBBLE) {
+            contact.getShapeB()->getBody()->setCollisionBitmask(1); // 001000
+        } else if (gra == GROUP_BUBBLE && grb == GROUP_PLAYER) {
+            contact.getShapeA()->getBody()->setCollisionBitmask(1); // 001000
+        }
     }
 }
 
@@ -254,7 +259,7 @@ void GameSceneController::registerProps() {
     // TURTLE
     props = Item::create();
     props->setAbleToHold(true);
-    props->setSpeedUp(0.6);
+    props->setSpeedUp(0.6f);
     Item::registerItem(props, KEY_TURTLE);
 }
 
@@ -338,6 +343,25 @@ bool GameSceneController::isPlayerAndBody(int a, int b) {
 void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
     model->players.at(p)->setDirection(d);
     view->setPlayerVelocity(p, model->players.at(p)->getVelocity());
+    switch (d) {
+    case PlayerModel::Direction::up:
+        view->playMovingAnimation(p, 0);
+        break;
+    case PlayerModel::Direction::down:
+        view->playMovingAnimation(p, 1);
+        break;
+    case PlayerModel::Direction::left:
+        view->playMovingAnimation(p, 2);
+        break;
+    case PlayerModel::Direction::right:
+        view->playMovingAnimation(p, 3);
+        break;
+    case PlayerModel::Direction::still:
+        view->stopMovingAnimation(p);
+        break;
+    default:
+        break;
+    }
 }
 
 void GameSceneController::placeBubble(int p) {
@@ -347,9 +371,17 @@ void GameSceneController::placeBubble(int p) {
         auto bm = BubbleModel::create();
         bm->setBlowDelay(model->players.at(p)->getBlowDelay());
         bm->setBlowRange(model->players.at(p)->getBlowRange());
+        bm->setOwner(model->players.at(p));
         model->setMap(pp.x, pp.y, bm);
         // TODO: Interface Request
-        //view->placeBubble(pp.x, pp.y);
+        auto body = PhysicsBody::createCircle(18, PhysicsMaterial(1, 0, 0));
+        body->setDynamic(false);
+        body->setRotationEnable(false);
+        body->setGroup(GROUP_BUBBLE);
+        body->setCategoryBitmask(8);            // 001000
+        body->setCollisionBitmask(0);           // 000000 Temp to fix bubble collision
+        body->setContactTestBitmask(1 + 16);    // 010001
+        view->placeBubble(pp.x, pp.y, body, model->players.at(p)->getBlowDelay());
     }
 }
 
@@ -474,41 +506,49 @@ void GameSceneController::keyboardOnKeyReleased(EventKeyboard::KeyCode code, Eve
     switch (code) {
     // Player0
     case EventKeyboard::KeyCode::KEY_W:
-        if (model->players.at(0)->getDirection() == PlayerModel::Direction::up)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::up) {
             changePlayerDirection(0, PlayerModel::Direction::still);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_S:
-        if (model->players.at(0)->getDirection() == PlayerModel::Direction::down)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::down) {
             changePlayerDirection(0, PlayerModel::Direction::still);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_A:
-        if (model->players.at(0)->getDirection() == PlayerModel::Direction::left)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::left) {
             changePlayerDirection(0, PlayerModel::Direction::still);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_D:
-        if (model->players.at(0)->getDirection() == PlayerModel::Direction::right)
+        if (model->players.at(0)->getDirection() == PlayerModel::Direction::right) {
             changePlayerDirection(0, PlayerModel::Direction::still);
+        }
         break;
     // Player1
     case EventKeyboard::KeyCode::KEY_I:
     case EventKeyboard::KeyCode::KEY_UP_ARROW:
-        if (model->players.at(1)->getDirection() == PlayerModel::Direction::up)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::up) {
             changePlayerDirection(1, PlayerModel::Direction::still);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_K:
     case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-        if (model->players.at(1)->getDirection() == PlayerModel::Direction::down)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::down) {
             changePlayerDirection(1, PlayerModel::Direction::still);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_J:
     case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        if (model->players.at(1)->getDirection() == PlayerModel::Direction::left)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::left) {
             changePlayerDirection(1, PlayerModel::Direction::still);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_L:
     case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-        if (model->players.at(1)->getDirection() == PlayerModel::Direction::right)
+        if (model->players.at(1)->getDirection() == PlayerModel::Direction::right) {
             changePlayerDirection(1, PlayerModel::Direction::still);
+        }
         break;
     // Default
     default:
