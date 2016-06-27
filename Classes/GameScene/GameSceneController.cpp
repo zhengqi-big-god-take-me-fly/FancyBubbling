@@ -273,7 +273,7 @@ void GameSceneController::addPlayers() {
     p0->items.insert(std::make_pair(KEY_TURTLE, 0));
     model->players.pushBack(p0);
     view->addPlayer(0, 0, 0, "player-0");
-    auto body0 = PhysicsBody::createCircle(18);
+    auto body0 = PhysicsBody::createCircle(18, PhysicsMaterial(1, 0, 0));
     body0->setGroup(GROUP_PLAYER);
     body0->setCategoryBitmask(1);                       // 000001
     body0->setCollisionBitmask(2 + 4 + 8);              // 001110
@@ -295,7 +295,7 @@ void GameSceneController::addPlayers() {
     model->players.pushBack(p1);
     view->addPlayer(1, 14, 12, "player-1");
     view->configPlayerPhysics(0, body0);
-    auto body1 = PhysicsBody::createCircle(18);
+    auto body1 = PhysicsBody::createCircle(18, PhysicsMaterial(1, 0, 0));
     body1->setGroup(GROUP_PLAYER);
     body1->setCategoryBitmask(1);                       // 000001
     body1->setCollisionBitmask(2 + 4 + 8);              // 001110
