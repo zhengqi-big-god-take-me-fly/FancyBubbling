@@ -64,19 +64,22 @@ void GameSceneController::update(float delta) {
 }
 
 void GameSceneController::bubbleExplode(Node * node) {
-    //auto gp = view->getGridPosition(node);
-    //auto range = ((BubbleModel *)getBlock(gp))->getBlowRange();
-    //Vec2 md[4] = { Vec2(0, -1), Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0) };  // 4 directions: Up, Right, Down, Left
-    //for (int d = 0; d < 3; ++d) {
-    //    auto rp = gp;
-    //    for (int r = 0; r < range; ++r) {
-    //        if (rp.x <= 0 || rp.x >= 14 || rp.y <= 0 || rp.y >= 12) break;
-    //        if (getBlock(rp + md[d])->isBlockWave()) break;
-    //        rp += md[d];
-    //    }
-    //    view->addWave(gp, rp);
-    //}
-    //view->removeNode(node);
+    auto gp = view->getGridPosition(node);
+    auto bubble = (BubbleModel *)model->getMap(gp.x, gp.y);
+    auto range = bubble->getBlowRange();
+    Vec2 md[4] = { Vec2(0, -1), Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0) };  // 4 directions: Up, Right, Down, Left
+    for (int d = 0; d < 3; ++d) {
+        auto rp = gp;
+        for (int r = 0; r < range; ++r) {
+            if (rp.x <= 0 || rp.x >= 14 || rp.y <= 0 || rp.y >= 12) break;
+            if (model->getMap((rp + md[d]).x, (rp + md[d]).y)->getBlockWave()) break;
+            rp += md[d];
+        }
+        // TODO: Interface request
+        //view->addWave(gp, rp);
+    }
+    view->removeNode(node);
+    ++bubble->getOwner()->items[KEY_BUBBLE];
 }
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
@@ -146,37 +149,20 @@ void GameSceneController::gameReady() {
     // Load map
     loadMap("garden");
 
-    // Add players
-    auto p1 = PlayerModel::create();
-    p1->setSpeed(80);
-    model->players.pushBack(p1);
-    auto p2 = PlayerModel::create();
-    p2->setSpeed(80);
-    model->players.pushBack(p2);
-    view->addPlayer(0, 0, 0, "player-0");
-    auto body0 = PhysicsBody::createCircle(18);
-    body0->setGroup(GROUP_PLAYER);
-    body0->setCategoryBitmask(1);                       // 000001
-    body0->setCollisionBitmask(2 + 4 + 8);              // 001110
-    body0->setContactTestBitmask(2 + 4 + 8 + 16 + 32);  // 111110
-    body0->setRotationEnable(false);
-    view->configPlayerPhysics(0, body0);
-    view->addPlayer(1, 14, 12, "player-1");
-    auto body1 = PhysicsBody::createCircle(18);
-    body1->setGroup(GROUP_PLAYER);
-    body1->setCategoryBitmask(1);                       // 000001
-    body1->setCollisionBitmask(2 + 4 + 8);              // 001110
-    body1->setContactTestBitmask(2 + 4 + 8 + 16 + 32);  // 111110
-    body1->setRotationEnable(false);
-    view->configPlayerPhysics(1, body1);
+    // Register props
+    registerProps();
+
+    // Add 2 players
+    addPlayers();
 
     // Load hud
-    //view->setHP(0, model->players[0]->getHP(), model->players[0]->getMaxHP());
-    //view->setHP(1, model->players[1]->getHP(), model->players[1]->getMaxHP());
-    //view->setPropsCount(0, 0, 0);
-    //view->setPropsCount(0, 1, 0);
-    //view->setPropsCount(1, 0, 0);
-    //view->setPropsCount(1, 1, 0);
+    // TODO: Interface request
+    //view->setHP(0, model->players.at(0)->getHp(), model->players.at(0)->getMaxHP());
+    //view->setHP(1, model->players.at(1)->getHp(), model->players.at(1)->getMaxHP());
+    view->setPropsCount(0, 0, 0);
+    view->setPropsCount(0, 1, 0);
+    view->setPropsCount(1, 0, 0);
+    view->setPropsCount(1, 1, 0);
 
     // Start countdown
     model->setTime(3);
@@ -229,6 +215,95 @@ void GameSceneController::loadMap(const std::string & mapName) {
     view->configEdgePhysics(edgeBody);
 }
 
+void GameSceneController::registerProps() {
+    Item * props;
+
+    // EMPTY
+    props = Item::create();
+    Item::registerItem(props, KEY_EMPTY);
+
+    // BUBBLE
+    props = Item::create();
+    Item::registerItem(props, KEY_BUBBLE);
+
+    // MEDICINE
+    props = Item::create();
+    props->setHpUp(30);
+    Item::registerItem(props, KEY_MEDICINE);
+
+    // SHIELD
+    props = Item::create();
+    props->setOriginStatus(PlayerModel::Status::invincible);
+    Item::registerItem(props, KEY_SHIELD);
+
+    // BALLOON
+    props = Item::create();
+    props->setShootRateUp(1);
+    Item::registerItem(props, KEY_BALLOON);
+
+    // POTION
+    props = Item::create();
+    props->setBlowRangeUp(1);
+    Item::registerItem(props, KEY_POTION);
+
+    // SHOES
+    props = Item::create();
+    props->setSpeedUp(2);
+    Item::registerItem(props, KEY_SHOES);
+
+    // TURTLE
+    props = Item::create();
+    props->setAbleToHold(true);
+    props->setSpeedUp(0.6);
+    Item::registerItem(props, KEY_TURTLE);
+}
+
+void GameSceneController::addPlayers() {
+    auto p0 = PlayerModel::create();
+    p0->setBlowDelay(3);
+    p0->setBlowRange(1);
+    p0->setDirection(PlayerModel::Direction::still);
+    p0->setHp(100);
+    //p0->setShootRate(1);
+    p0->setSpeed(80);
+    p0->setStatus(PlayerModel::Status::alive);
+    p0->items.insert(std::make_pair(KEY_BUBBLE, 1));
+    p0->items.insert(std::make_pair(KEY_MEDICINE, 0));
+    p0->items.insert(std::make_pair(KEY_SHIELD, 0));
+    p0->items.insert(std::make_pair(KEY_TURTLE, 0));
+    model->players.pushBack(p0);
+    view->addPlayer(0, 0, 0, "player-0");
+    auto body0 = PhysicsBody::createCircle(18);
+    body0->setGroup(GROUP_PLAYER);
+    body0->setCategoryBitmask(1);                       // 000001
+    body0->setCollisionBitmask(2 + 4 + 8);              // 001110
+    body0->setContactTestBitmask(2 + 4 + 8 + 16 + 32);  // 111110
+    body0->setRotationEnable(false);
+
+    auto p1 = PlayerModel::create();
+    p1->setBlowDelay(3);
+    p1->setBlowRange(1);
+    p1->setDirection(PlayerModel::Direction::still);
+    p1->setHp(100);
+    //p1->setShootRate(1);
+    p1->setSpeed(80);
+    p1->setStatus(PlayerModel::Status::alive);
+    p1->items.insert(std::make_pair(KEY_BUBBLE, 1));
+    p1->items.insert(std::make_pair(KEY_MEDICINE, 0));
+    p1->items.insert(std::make_pair(KEY_SHIELD, 0));
+    p1->items.insert(std::make_pair(KEY_TURTLE, 0));
+    model->players.pushBack(p1);
+    view->addPlayer(1, 14, 12, "player-1");
+    view->configPlayerPhysics(0, body0);
+    auto body1 = PhysicsBody::createCircle(18);
+    body1->setGroup(GROUP_PLAYER);
+    body1->setCategoryBitmask(1);                       // 000001
+    body1->setCollisionBitmask(2 + 4 + 8);              // 001110
+    body1->setContactTestBitmask(2 + 4 + 8 + 16 + 32);  // 111110
+    body1->setRotationEnable(false);
+    view->configPlayerPhysics(1, body1);
+}
+
 bool GameSceneController::playerPresolve(Node * player) {
     int p = view->getPlayerId(player);
     auto body = player->getPhysicsBody();
@@ -266,15 +341,16 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
 }
 
 void GameSceneController::placeBubble(int p) {
-    //if (model->players[p]->items[KEY_BUBBLE] > 0) {
-    //    --model->players[p]->items[KEY_BUBBLE];
-    //    auto pp = view->getPlayerGridPosition(p);
-    //    auto bm = BubbleModel::create();
-    //    bm->setBlowDelay(3);
-    //    bm->setBlowRange(model->players[p]->getBlowRange());
-    //    model->map[(int)pp.x][(int)pp.y] = bm;
-    //    view->addBubble(pp, CC_CALLBACK_1(GameSceneControllerDelegate::bubbleExplode, this));
-    //}
+    if (model->players.at(p)->items[KEY_BUBBLE] > 0) {
+        --model->players.at(p)->items[KEY_BUBBLE];
+        auto pp = view->getPlayerGridPosition(p);
+        auto bm = BubbleModel::create();
+        bm->setBlowDelay(model->players.at(p)->getBlowDelay());
+        bm->setBlowRange(model->players.at(p)->getBlowRange());
+        model->setMap(pp.x, pp.y, bm);
+        // TODO: Interface Request
+        //view->placeBubble(pp.x, pp.y);
+    }
 }
 
 void GameSceneController::useProps(int p, const char * k) {
@@ -298,16 +374,18 @@ void GameSceneController::playerGetProps(int p, Node * pr) {
 }
 
 void GameSceneController::blockBeAttacked(Node * b) {
-    //auto g = view->getGridPosition(b);
-    //getBlock(g) = nullptr;
-    //generateProps(g);
+    auto g = view->getGridPosition(b);
+    model->removeMap(g.x, g.y);
+    generateProps(g);
 }
 
 void GameSceneController::generateProps(Vec2 p) {
-    //auto key = model->propsKeys[RandomHelper::random_int(1, model->propsKeys.size()) - 1];
-    //auto item = Item::create(key);
-    //view->addProps(p.x, p.y, "player-avatar-box.png");
-    //model->map[(int)p.x][(int)p.y] = ItemBlockModel::create(item);
+    // TODO: Interface request
+    //auto props = Item::randomGenerate();
+    //if (props->getKey().compare(KEY_EMPTY) != 0) {
+    //    model->setMap(p.x, p.y, ItemBlockModel::create(props));
+    //    view->addProps(p.x, p.y, "png");
+    //}
 }
 
 void GameSceneController::countdown(float delta) {

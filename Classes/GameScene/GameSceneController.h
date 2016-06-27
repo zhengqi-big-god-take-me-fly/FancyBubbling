@@ -8,8 +8,14 @@
 
 USING_NS_CC;
 
+#define KEY_EMPTY "EMPTY"
+#define KEY_BUBBLE "BUBBLE"
 #define KEY_MEDICINE "MEDICINE"
 #define KEY_SHIELD "SHIELD"
+#define KEY_BALLOON "BALLOON"
+#define KEY_POTION "POTION"
+#define KEY_SHOES "SHOES"
+#define KEY_TURTLE "TURTLE"
 
 class GameSceneController : public Scene, public GameSceneControllerDelegate {
 public:
@@ -37,6 +43,8 @@ private:
     void gameResume();
     void gameExit();
     void loadMap(const std::string & mapName);
+    void registerProps();
+    void addPlayers();
     bool playerPresolve(Node * player);
     void playerSeparate(Node * player);
     bool isPlayerAndBody(int a, int b);
