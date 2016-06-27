@@ -28,12 +28,21 @@ public:
     void configTilePhysics(int x, int y, PhysicsBody * body);
     void configPlayerPhysics(int p, PhysicsBody * body);
     void configEdgePhysics(PhysicsBody * body);
+    void placeBubble(int x, int y);
+    void addProps(int x, int y, const std::string & filename);
+    void disposeWave(float dt);
     void updatePlayerZ();
+    void playMovingAnimation(int p, int d);
+    void stopMovingAnimation(int p);
+    void playHurtAnimation(int p);
+    void playerDie(int p);
+    void playerProtected(int p, bool protect);
+    void addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body);
 private:
 	int playerCount;
 	Vec2 player1_pos;
 	Vec2 player2_pos;
-
+    
 	PhysicsWorld *myWorld;
 	Sprite *edge;
 

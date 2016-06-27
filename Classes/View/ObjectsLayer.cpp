@@ -70,6 +70,8 @@ int ObjectsLayer::getPlayerId(Node * node)
 	//return r;
 }
 
+
+
 ObjectsLayer * ObjectsLayer::create(PhysicsWorld * world) {
 	ObjectsLayer* pRet = new(std::nothrow) ObjectsLayer();
 	if (pRet && pRet->init(world)) {
@@ -264,6 +266,119 @@ void ObjectsLayer::updatePlayerZ() {
         it->second->setLocalZOrder(map->getLayer(layerName)->getLocalZOrder());
     }
 }
+
+void ObjectsLayer::playMovingAnimation(int p, int d) {
+    String direction = "default";
+    char frameName[128];
+    
+    switch (d) {
+        case 0:
+            direction = "up";
+            break;
+        case 1:
+            direction = "down";
+            break;
+        case 2:
+            direction = "left";
+            break;
+        case 3:
+            direction = "right";
+            break;
+        default:
+            break;
+    }
+
+    Vector<SpriteFrame *> caches;
+    for (int i = 0; i < 4; i++) {
+        sprintf(frameName, "player-%d-%s-%d.png", p, direction, i);
+        SpriteFrame* time = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
+        caches.pushBack(time);
+    }
+
+    Animation *anim = Animation::createWithSpriteFrames(caches, 0.5);
+    Animate *ani = Animate::create(anim);
+    ani->setTag(999);
+    players.at(p)->runAction(RepeatForever::create(ani));
+}
+
+void ObjectsLayer::stopMovingAnimation(int p) {
+    players.at(p)->stopActionByTag(999);
+}
+
+void ObjectsLayer::playHurtAnimation(int p) {
+    FiniteTimeAction *fat = TintTo::create(0.1, Color3B(255, 0, 0));
+    FiniteTimeAction *white = TintTo::create(0.1, Color3B(255, 255, 255));
+    FiniteTimeAction *normal = TintBy::create(0.1, 0, 0, 0);
+    
+    auto hurt = Sequence::create(fat, normal, white, normal);
+    players.at(p)->stopAction(RepeatForever::create(hurt));
+}
+
+void ObjectsLayer::playerDie(int p) {
+    auto shade = TintBy::create(0.5 , -50, -50, -50);
+    players.at(p)->runAction(Repeat::create(shade, 1));
+}
+
+void ObjectsLayer::playerProtected(int p, bool protect) {
+    // add the file into the animation list;
+    String protection = "";
+    char frameName[128];
+    Vector<SpriteFrame *> caches;
+    for (int i = 0; i < 4; i++) {
+        sprintf(frameName, "%s-%d.png" , protection , i);
+        SpriteFrame* time = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
+        caches.pushBack(time);
+    }
+
+    Animation *anim = Animation::createWithSpriteFrames(caches, 0.5);
+    Animate *ani = Animate::create(anim);
+    ani->setTag(11111);
+    players.at(p)->runAction(RepeatForever::create(ani));
+
+}
+
+void ObjectsLayer::addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body) {
+    Vec2 result = end - start;
+    if (result.x == 0) {
+        // horizontal
+        Sprite *wave = Sprite::create(filename);
+        wave->setContentSize(Size(36, 20));
+        setGridPosition(wave, start.x, start.y - 0.25);
+        wave->setPhysicsBody(body);
+        map->addChild(wave);
+        FiniteTimeAction *ac = ScaleTo::create(show, 1, abs(start.y - end.y));
+        wave->runAction(ac);
+        scheduleOnce(schedule_selector(ObjectsLayer::disposeWave), live + show);
+    } else {
+        Sprite *wave = Sprite::create(filename);
+        wave->setContentSize(Size(20, 36));
+        setGridPosition(wave, start.x - 0.25, start.y);
+        wave->setPhysicsBody(body);
+        map->addChild(wave);
+        FiniteTimeAction *ac = ScaleTo::create(show, abs(start.x - end.x) , 1);
+        wave->runAction(ac);
+        scheduleOnce(schedule_selector(ObjectsLayer::disposeWave), live + show);
+    }
+}
+
+
+void ObjectsLayer::placeBubble(int x, int y) {
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("bubble.plist");
+    Sprite *bubble = Sprite::createWithSpriteFrameName("bubble.png");
+    setGridPosition(bubble, x, y);
+    map->addChild(bubble);
+}
+
+void ObjectsLayer::addProps(int x, int y, const std::string & filename) {
+    Sprite *prop = Sprite::create(filename);
+    setGridPosition(prop, x, y);
+    map->addChild(prop);
+}
+
+void ObjectsLayer::disposeWave(float dt) {
+     
+}
+
 
 Node * ObjectsLayer::getTile(int x, int y) {
     char layerName[128];
