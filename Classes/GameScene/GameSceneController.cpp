@@ -34,11 +34,11 @@ bool GameSceneController::initWithPhysics() {
     model->retain();                    // Controller retains model instance.
 
     // EventListeners
-    auto keyboardListener = EventListenerKeyboard::create();
+    keyboardListener = EventListenerKeyboard::create();
     keyboardListener->onKeyPressed = CC_CALLBACK_2(GameSceneController::keyboardOnKeyPressed, this);
     keyboardListener->onKeyReleased = CC_CALLBACK_2(GameSceneController::keyboardOnKeyReleased, this);
     _eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, -1);
-    auto spritePhysicsListener = EventListenerPhysicsContact::create();
+    spritePhysicsListener = EventListenerPhysicsContact::create();
     spritePhysicsListener->onContactBegin = CC_CALLBACK_1(GameSceneController::spriteOnContactBegin, this);
     spritePhysicsListener->onContactPreSolve = CC_CALLBACK_2(GameSceneController::spriteOnContactPreSolve, this);
     spritePhysicsListener->onContactSeparate = CC_CALLBACK_1(GameSceneController::spriteOnContactSeparate, this);
@@ -46,13 +46,12 @@ bool GameSceneController::initWithPhysics() {
 
     gameReady();
 
-    //scheduleUpdate();
-
     return true;
 }
 
 void GameSceneController::onExit() {
-    unscheduleUpdate();
+    _eventDispatcher->removeEventListener(keyboardListener);
+    _eventDispatcher->removeEventListener(spritePhysicsListener);
     model->release();
     Scene::onExit();
 }
@@ -89,16 +88,16 @@ bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
     
     // Player and wave
     if (gra == GROUP_WAVE && grb == GROUP_PLAYER) {
-        //playerBeAttacked(view->getPlayerId(sb));
+        playerBeAttacked(view->getPlayerId(sb));
     } else if (grb == GROUP_WAVE && gra == GROUP_PLAYER) {
-        //playerBeAttacked(view->getPlayerId(sa));
+        playerBeAttacked(view->getPlayerId(sa));
     }
 
     // Player and props
     if (gra == GROUP_PLAYER && grb == GROUP_PROPS) {
-        //playerGetProps(view->getPlayerId(sa), sb);
+        playerGetProps(view->getPlayerId(sa), sb);
     } else if (gra == GROUP_PROPS && grb == GROUP_PLAYER) {
-        //playerGetProps(view->getPlayerId(sb), sa);
+        playerGetProps(view->getPlayerId(sb), sa);
     }
 
     // Wave and block
@@ -138,20 +137,16 @@ void GameSceneController::spriteOnContactSeparate(PhysicsContact & contact) {
     }
 }
 
-//BlockModel * GameSceneController::getBlock(Vec2 v) {
-//    return model->getMap(v.x, v.y);
-//}
-
 void GameSceneController::gameReady() {
     // Load map
     loadMap("garden");
 
     // Add players
     auto p1 = PlayerModel::create();
-    p1->setSpeed(10);
+    p1->setSpeed(80);
     model->players.pushBack(p1);
     auto p2 = PlayerModel::create();
-    p2->setSpeed(10);
+    p2->setSpeed(80);
     model->players.pushBack(p2);
     view->addPlayer(0, 0, 0, "player-0");
     view->addPlayer(1, 14, 12, "player-1");
@@ -195,35 +190,48 @@ void GameSceneController::loadMap(const std::string & mapName) {
     view->useMap(("maps/" + mapName + ".tmx").c_str());
     for (unsigned x = 0; x < model->map.size(); ++x) {
         for (unsigned y = 0; y < model->map[y].size(); ++y) {
-            //view->configPhysics(x, y, PhysicsBody::createBox(Size(40, 40)), model->map[x].at(y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
+            if (model->getMap(x, y) != nullptr && model->getMap(x, y)->getKey().compare("empty") != 0) {
+                auto body = PhysicsBody::createBox(Size(40, 40));
+                body->setGroup(model->getMap(x, y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
+                body->setCategoryBitmask(model->getMap(x, y)->getBreakable() ? 2 : 4);          // 000010 : 000100
+                body->setCollisionBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);         // 000001 : 000001
+                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);       // 000001 : 000001
+            //view->configPhysics(x, y, body);
+            }
         }
     }
+    auto edgeBody = PhysicsBody::createEdgeBox(Size(600, 520));
+    edgeBody->setGroup(GROUP_WALL);
+    edgeBody->setCategoryBitmask(4);    // 000100
+    edgeBody->setCollisionBitmask(1);   // 000001
+    edgeBody->setContactTestBitmask(1); // 000001
+    //view->configEdgePhysics(edgeBody);
 }
 
 bool GameSceneController::playerPresolve(Node * player) {
-    //int p = view->getPlayerId(player);
-    //auto body = player->getPhysicsBody();
-    //switch (model->players[p]->getDirection()) {
-    //case PlayerModel::Direction::up:
-    //case PlayerModel::Direction::down:
-    //    body->setVelocity(Vec2(body->getVelocity().x, model->players[p]->getVelocity().y));
-    //    return true;
-    //case PlayerModel::Direction::left:
-    //case PlayerModel::Direction::right:
-    //    body->setVelocity(Vec2(model->players[p]->getVelocity().x, body->getVelocity().y));
-    //    return true;
-    //case PlayerModel::Direction::still:
-    //    body->setVelocity(Vec2::ZERO);
-    //    return false;
-    //default:
-    //    return false;
-    //}
+    int p = view->getPlayerId(player);
+    auto body = player->getPhysicsBody();
+    switch (model->players.at(p)->getDirection()) {
+    case PlayerModel::Direction::up:
+    case PlayerModel::Direction::down:
+        body->setVelocity(Vec2(body->getVelocity().x, model->players.at(p)->getVelocity().y));
+        return true;
+    case PlayerModel::Direction::left:
+    case PlayerModel::Direction::right:
+        body->setVelocity(Vec2(model->players.at(p)->getVelocity().x, body->getVelocity().y));
+        return true;
+    case PlayerModel::Direction::still:
+        body->setVelocity(Vec2::ZERO);
+        return false;
+    default:
+        return false;
+    }
     return false;
 }
 
 void GameSceneController::playerSeparate(Node * player) {
-    //int p = view->getPlayerId(player);
-    //player->getPhysicsBody()->setVelocity(model->players[p]->getVelocity());
+    int p = view->getPlayerId(player);
+    player->getPhysicsBody()->setVelocity(model->players.at(p)->getVelocity());
 }
 
 bool GameSceneController::isPlayerAndBody(int a, int b) {

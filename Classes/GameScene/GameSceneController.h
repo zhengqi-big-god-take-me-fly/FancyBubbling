@@ -59,6 +59,8 @@ private:
     // Memeber variables
     GameSceneView * view;
     GameSceneModel * model;
+    EventListenerKeyboard * keyboardListener;
+    EventListenerPhysicsContact * spritePhysicsListener;
 };
 
 #endif // !__GAME_SCENE_CONTROLLER_H__
