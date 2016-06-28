@@ -39,6 +39,7 @@ public:
     void configEdgePhysics(PhysicsBody * body);
     void updatePlayerZ();
     void placeBubble(int x, int y, PhysicsBody * body, float time);
+    void addProps(int x, int y, const std::string & filename, PhysicsBody * body);
     void playMovingAnimation(int p, int d);
     void stopMovingAnimation(int p);
     void playHurtAnimation(int p);

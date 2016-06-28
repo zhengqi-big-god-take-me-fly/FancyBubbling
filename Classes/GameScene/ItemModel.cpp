@@ -70,7 +70,7 @@ void Item::applyToPlayer(PlayerModel * player, bool resume) {
     }
 }
 
-Item * Item::randomGenerate() const {
+Item * Item::randomGenerate() {
     float ran = random(0.0f, _totalAppearRate);
     for (auto it = _registPool.begin(); it != _registPool.end(); ++it) {
         if (ran > it->second.getAppearRate()) {

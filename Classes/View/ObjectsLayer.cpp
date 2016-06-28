@@ -27,12 +27,14 @@ bool ObjectsLayer::init(PhysicsWorld* world, GameSceneControllerDelegate * _cont
 
 	addEdge();
 
-	//for (int i = 0; i < 2; i++) {
-	//	//players.pushBack(NULL);
-	//	//hps.pushBack(NULL);
-	//	//avatars.pushBack(NULL);
-	//	//hpTimers.pushBack(NULL);
-	//}
+	for (int i = 0; i < 2; i++) {
+		//players.pushBack(NULL);
+        auto hpbar = Sprite::create("hp-foreground.png");
+		hps.pushBack(hpbar);
+		//avatars.pushBack(NULL);
+        auto timer = ProgressTimer::create(hpbar);
+		hpTimers.pushBack(timer);
+	}
 
 	//player1->setPhysicsBody(PhysicsBody::createCircle(player1->getContentSize().height / 2));
 	//player1->setAnchorPoint(Vec2(0.5, 0.5));
@@ -356,27 +358,17 @@ void ObjectsLayer::playerProtected(int p, bool protect) {
 }
 
 void ObjectsLayer::addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body) {
-    Vec2 result = end - start;
-    if (result.x == 0) {
-        // horizontal
-        Sprite *wave = Sprite::create(filename);
-        wave->setContentSize(Size(36, 20));
-        setGridPosition(wave, start.x, start.y - 0.25);
-        wave->setPhysicsBody(body);
-        map->addChild(wave);
-        FiniteTimeAction *ac = ScaleTo::create(show, 1, abs(start.y - end.y));
-        wave->runAction(ac);
-        scheduleOnce(schedule_selector(ObjectsLayer::disposeWave), live + show);
-    } else {
-        Sprite *wave = Sprite::create(filename);
-        wave->setContentSize(Size(20, 36));
-        setGridPosition(wave, start.x - 0.25, start.y);
-        wave->setPhysicsBody(body);
-        map->addChild(wave);
-        FiniteTimeAction *ac = ScaleTo::create(show, abs(start.x - end.x) , 1);
-        wave->runAction(ac);
-        scheduleOnce(schedule_selector(ObjectsLayer::disposeWave), live + show);
-    }
+    auto result = end - start;
+    result.y = -result.y;
+    //if (result == Vec2::ZERO) return;
+    auto wave = Sprite::create(filename);
+    map->addChild(wave, 20);
+    setGridPosition(wave, start.x, start.y);
+    wave->setPhysicsBody(body);
+    wave->getPhysicsBody()->setVelocity(Vec2(result.x * 40, result.y * 40) / show);
+    wave->runAction(Sequence::createWithTwoActions(ScaleTo::create(show + live - 1.0f / 60, 1), CallFuncN::create([this](Node * node) {
+        this->disposeWave(node);
+    })));
 }
 
 int ObjectsLayer::getZOrderOfRow(int y) {
@@ -384,11 +376,6 @@ int ObjectsLayer::getZOrderOfRow(int y) {
     sprintf(layerName, "Row%d", y);
     return map->getLayer(layerName)->getLocalZOrder();
 }
-
-//void ObjectsLayer::bubbleScheduler(float delta) {
-//    controller->bubbleExplode((Node *)this);
-//}
-
 
 void ObjectsLayer::placeBubble(int x, int y, PhysicsBody * body, float time) {
     auto sfc = SpriteFrameCache::getInstance();
@@ -406,16 +393,18 @@ void ObjectsLayer::placeBubble(int x, int y, PhysicsBody * body, float time) {
     map->addChild(bubble, getZOrderOfRow(y));
 }
 
-void ObjectsLayer::addProps(int x, int y, const std::string & filename) {
-    Sprite *prop = Sprite::create(filename);
-    setGridPosition(prop, x, y);
-    map->addChild(prop);
+void ObjectsLayer::addProps(int x, int y, const std::string & filename, PhysicsBody * body) {
+    auto props = Sprite::create(filename);
+    props->setPhysicsBody(body);
+    setGridPosition(props, x, y);
+    map->addChild(props);
 }
 
-void ObjectsLayer::disposeWave(float dt) {
-     
+void ObjectsLayer::disposeWave(Node * wave) {
+    //wave->getPhysicsBody()->setVelocity(Vec2::ZERO);
+    //wave->getPhysicsBody()->removeFromWorld();
+    wave->removeFromParent();
 }
-
 
 Node * ObjectsLayer::getTile(int x, int y) {
     char layerName[128];

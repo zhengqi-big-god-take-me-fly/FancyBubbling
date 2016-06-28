@@ -68,15 +68,27 @@ void GameSceneController::bubbleExplode(Node * node) {
     auto bubble = (BubbleModel *)model->getMap(gp.x, gp.y);
     auto range = bubble->getBlowRange();
     Vec2 md[4] = { Vec2(0, -1), Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0) };  // 4 directions: Up, Right, Down, Left
-    for (int d = 0; d < 3; ++d) {
+    for (int d = 0; d < 4; ++d) {
         auto rp = gp;
         for (int r = 0; r < range; ++r) {
-            if (rp.x <= 0 || rp.x >= 14 || rp.y <= 0 || rp.y >= 12) break;
-            if (model->getMap((rp + md[d]).x, (rp + md[d]).y)->getBlockWave()) break;
             rp += md[d];
+            if (rp.x < 0 || rp.x > 14 || rp.y < 0 || rp.y > 12
+                || (model->getMap(rp.x, rp.y) != nullptr && model->getMap(rp.x, rp.y)->getKey().compare(KEY_EMPTY) == false && model->getMap(rp.x, rp.y)->getBreakable() == false)) {
+                rp -= md[d];
+                break;
+            }
+            if (model->getMap(rp.x, rp.y) != nullptr
+                && model->getMap(rp.x, rp.y)->getKey().compare(KEY_EMPTY) == false
+                && model->getMap(rp.x, rp.y)->getBreakable()
+                && model->getMap(rp.x, rp.y)->getBlockWave()) break;
         }
-        // TODO: Interface request
-        //view->addWave(gp, rp);
+        CCLOG("%d, %d", (int)rp.x, (int)rp.y);
+        auto body = PhysicsBody::createCircle(10);
+        body->setGroup(GROUP_WAVE);
+        body->setCategoryBitmask(16);           // 010000
+        body->setCollisionBitmask(0);           // 000000
+        body->setContactTestBitmask(1 + 2 + 8); // 001011
+        view->addWave(gp, rp, 0.2f, 0, "wave.png", body);
     }
     view->removeNode(node);
     ++bubble->getOwner()->items[KEY_BUBBLE];
@@ -161,9 +173,8 @@ void GameSceneController::gameReady() {
     addPlayers();
 
     // Load hud
-    // TODO: Interface request
-    //view->setHP(0, model->players.at(0)->getHp(), model->players.at(0)->getMaxHP());
-    //view->setHP(1, model->players.at(1)->getHp(), model->players.at(1)->getMaxHP());
+    view->setHP(0, model->players.at(0)->getHp(), 100/*model->players.at(0)->getMaxHP()*/);
+    view->setHP(1, model->players.at(1)->getHp(), 100/*model->players.at(1)->getMaxHP()*/);
     view->setPropsCount(0, 0, 0);
     view->setPropsCount(0, 1, 0);
     view->setPropsCount(1, 0, 0);
@@ -225,39 +236,47 @@ void GameSceneController::registerProps() {
 
     // EMPTY
     props = Item::create();
+    props->setAppearRate(67);
     Item::registerItem(props, KEY_EMPTY);
 
     // BUBBLE
     props = Item::create();
+    props->setAppearRate(0);
     Item::registerItem(props, KEY_BUBBLE);
 
     // MEDICINE
     props = Item::create();
+    props->setAppearRate(16);
     props->setHpUp(30);
     Item::registerItem(props, KEY_MEDICINE);
 
     // SHIELD
     props = Item::create();
+    props->setAppearRate(16);
     props->setOriginStatus(PlayerModel::Status::invincible);
     Item::registerItem(props, KEY_SHIELD);
 
     // BALLOON
     props = Item::create();
+    props->setAppearRate(16);
     props->setShootRateUp(1);
     Item::registerItem(props, KEY_BALLOON);
 
     // POTION
     props = Item::create();
+    props->setAppearRate(16);
     props->setBlowRangeUp(1);
     Item::registerItem(props, KEY_POTION);
 
     // SHOES
     props = Item::create();
+    props->setAppearRate(16);
     props->setSpeedUp(2);
     Item::registerItem(props, KEY_SHOES);
 
     // TURTLE
     props = Item::create();
+    props->setAppearRate(16);
     props->setAbleToHold(true);
     props->setSpeedUp(0.6f);
     Item::registerItem(props, KEY_TURTLE);
@@ -343,25 +362,26 @@ bool GameSceneController::isPlayerAndBody(int a, int b) {
 void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d) {
     model->players.at(p)->setDirection(d);
     view->setPlayerVelocity(p, model->players.at(p)->getVelocity());
-    switch (d) {
-    case PlayerModel::Direction::up:
-        view->playMovingAnimation(p, 0);
-        break;
-    case PlayerModel::Direction::down:
-        view->playMovingAnimation(p, 1);
-        break;
-    case PlayerModel::Direction::left:
-        view->playMovingAnimation(p, 2);
-        break;
-    case PlayerModel::Direction::right:
-        view->playMovingAnimation(p, 3);
-        break;
-    case PlayerModel::Direction::still:
-        view->stopMovingAnimation(p);
-        break;
-    default:
-        break;
-    }
+    // There is bug in playing animation on a sprite with physics body.
+    //switch (d) {
+    //case PlayerModel::Direction::up:
+    //    view->playMovingAnimation(p, 0);
+    //    break;
+    //case PlayerModel::Direction::down:
+    //    view->playMovingAnimation(p, 1);
+    //    break;
+    //case PlayerModel::Direction::left:
+    //    view->playMovingAnimation(p, 2);
+    //    break;
+    //case PlayerModel::Direction::right:
+    //    view->playMovingAnimation(p, 3);
+    //    break;
+    //case PlayerModel::Direction::still:
+    //    view->stopMovingAnimation(p);
+    //    break;
+    //default:
+    //    break;
+    //}
 }
 
 void GameSceneController::placeBubble(int p) {
@@ -373,7 +393,6 @@ void GameSceneController::placeBubble(int p) {
         bm->setBlowRange(model->players.at(p)->getBlowRange());
         bm->setOwner(model->players.at(p));
         model->setMap(pp.x, pp.y, bm);
-        // TODO: Interface Request
         auto body = PhysicsBody::createCircle(18, PhysicsMaterial(1, 0, 0));
         body->setDynamic(false);
         body->setRotationEnable(false);
@@ -398,26 +417,42 @@ void GameSceneController::playerBeAttacked(int p) {
 }
 
 void GameSceneController::playerGetProps(int p, Node * pr) {
-    //auto g = view->getGridPosition(pr);
-    //auto props = (ItemBlockModel *)model->map[(int)g.x][(int)g.y];
-    //// TODO: What is resume?
-    //props->applyToPlayer(model->players[p], true);
-    //model->map[(int)g.x][(int)g.y] = nullptr;
+    auto g = view->getGridPosition(pr);
+    auto props = ((ItemBlockModel *)model->getMap(g.x, g.y))->getItem();
+    if (props->getKey().compare(KEY_MEDICINE) == 0) {
+        ++model->players.at(p)->items[KEY_MEDICINE];
+        view->setPropsCount(p, 0, model->players.at(p)->items[KEY_MEDICINE]);
+    } else if (props->getKey().compare(KEY_SHIELD) == 0) {
+        ++model->players.at(p)->items[KEY_SHIELD];
+        view->setPropsCount(p, 0, model->players.at(p)->items[KEY_SHIELD]);
+    } else {
+        props->applyToPlayer(model->players.at(p), props->getKey().compare(KEY_SHIELD) == 0);
+    }
+    // clean
+    model->removeMap(g.x, g.y);
+    view->removeNode(pr);
 }
 
 void GameSceneController::blockBeAttacked(Node * b) {
     auto g = view->getGridPosition(b);
     model->removeMap(g.x, g.y);
+    view->removeNode(b);
     generateProps(g);
 }
 
 void GameSceneController::generateProps(Vec2 p) {
-    // TODO: Interface request
-    //auto props = Item::randomGenerate();
-    //if (props->getKey().compare(KEY_EMPTY) != 0) {
-    //    model->setMap(p.x, p.y, ItemBlockModel::create(props));
-    //    view->addProps(p.x, p.y, "png");
-    //}
+    auto props = Item::randomGenerate();
+    if (props != nullptr && props->getKey().compare(KEY_EMPTY) != 0) {
+        model->setMap(p.x, p.y, ItemBlockModel::create(props));
+        auto body = PhysicsBody::createBox(Size(40, 40));
+        body->setDynamic(false);
+        body->setRotationEnable(false);
+        body->setGroup(GROUP_PROPS);
+        body->setCategoryBitmask(32);   // 100000
+        body->setCollisionBitmask(0);   // 000000
+        body->setContactTestBitmask(1); // 000001
+        view->addProps(p.x, p.y, props->getKey() + ".png", body);
+    }
 }
 
 void GameSceneController::countdown(float delta) {

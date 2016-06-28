@@ -105,6 +105,10 @@ void GameSceneView::placeBubble(int x, int y, PhysicsBody * body, float time) {
     objectsLayer->placeBubble(x, y, body, time);
 }
 
+void GameSceneView::addProps(int x, int y, const std::string & filename, PhysicsBody * body) {
+    objectsLayer->addProps(x, y, filename, body);
+}
+
 void GameSceneView::playMovingAnimation(int p, int d) {
     objectsLayer->playMovingAnimation(p, d);
 }

@@ -44,7 +44,7 @@ public :
     
     void applyToPlayer(PlayerModel * player, bool resume);
     
-    Item * randomGenerate() const;
+    static Item * randomGenerate();
     
 protected :
     bool _canHold;
