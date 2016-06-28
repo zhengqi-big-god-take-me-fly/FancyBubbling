@@ -2,7 +2,6 @@
 #include "ItemModel.h"
 
 bool PlayerModel::init() {
-    // TODO
     _hp = DEFAULT_HP;
     _speed = DEFAULT_SPEED;
     _shootRate = DEFAULT_SHOOT_RATE;
