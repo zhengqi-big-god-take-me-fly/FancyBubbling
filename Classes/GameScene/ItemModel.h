@@ -59,6 +59,9 @@ public :
     
     virtual bool init(Item * item);
     
+    virtual ~ItemBlockModel();
+    
+    
     CC_SYNTHESIZE_READONLY(Item *, _item, Item);
 };
 

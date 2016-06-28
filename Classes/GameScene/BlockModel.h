@@ -23,6 +23,8 @@ public :
     CC_SYNTHESIZE(bool, _breakable, Breakable);
     CC_SYNTHESIZE(bool, _blockWave, BlockWave);
     
+    virtual ~BlockModel() {}
+    
 protected :
     
     static std::map<std::string, BlockModel> _registPool;
