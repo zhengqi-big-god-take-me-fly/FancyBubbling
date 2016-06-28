@@ -1,12 +1,6 @@
 #include "PlayerModel.h"
 #include "ItemModel.h"
 
-#define MAX_HP 100.0f
-#define MIN_HP 0.0f
-#define DEFAULT_HP 100.0f
-#define DEFAULT_SPEED 10.0f
-#define DEFAULT_SHOOT_RATE 1.0f
-
 bool PlayerModel::init() {
     // TODO
     _hp = DEFAULT_HP;

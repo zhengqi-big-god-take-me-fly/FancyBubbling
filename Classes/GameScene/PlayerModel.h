@@ -8,10 +8,22 @@ USING_NS_CC;
 
 //#define PLAYER_DIRECTION_CHANGED_EVENT "player direction changed"
 
+//#define MAX_HP 100.0f
+//#define MIN_HP 0.0f
+//#define DEFAULT_HP 100.0f
+//#define DEFAULT_SPEED 10.0f
+//#define DEFAULT_SHOOT_RATE 1.0f
+
 class ItemModel;
 
 class PlayerModel : public Ref {
 public :
+    
+    const float MAX_HP = 100.0f;
+    const float MIN_HP = 0.0f;
+    const float DEFAULT_HP = 100.0f;
+    const float DEFAULT_SPEED = 10.0f;
+    const float DEFAULT_SHOOT_RATE = 1.0f;
     
     typedef enum {
         dead,
