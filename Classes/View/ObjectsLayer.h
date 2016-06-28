@@ -30,8 +30,8 @@ public:
     void configPlayerPhysics(int p, PhysicsBody * body);
     void configEdgePhysics(PhysicsBody * body);
     void placeBubble(int x, int y, PhysicsBody * body, float time);
-    void addProps(int x, int y, const std::string & filename);
-    void disposeWave(float dt);
+    void addProps(int x, int y, const std::string & filename, PhysicsBody * body);
+    void disposeWave(Node * wave);
     void updatePlayerZ();
     void playMovingAnimation(int p, int d);
     void stopMovingAnimation(int p);
