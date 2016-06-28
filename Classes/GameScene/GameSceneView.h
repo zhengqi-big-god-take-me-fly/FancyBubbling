@@ -3,9 +3,9 @@
 
 #include "cocos2d.h"
 #include "GameSceneControllerDelegate.h"
-#include "View/BackgroundLayer.h"
-#include "View/HudLayer.h"
-#include "View/ObjectsLayer.h"
+#include "../View/BackgroundLayer.h"
+#include "../View/HudLayer.h"
+#include "../View/ObjectsLayer.h"
 
 USING_NS_CC;
 

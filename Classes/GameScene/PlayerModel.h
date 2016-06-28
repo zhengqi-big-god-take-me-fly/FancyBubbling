@@ -8,12 +8,6 @@ USING_NS_CC;
 
 //#define PLAYER_DIRECTION_CHANGED_EVENT "player direction changed"
 
-//#define MAX_HP 100.0f
-//#define MIN_HP 0.0f
-//#define DEFAULT_HP 100.0f
-//#define DEFAULT_SPEED 10.0f
-//#define DEFAULT_SHOOT_RATE 1.0f
-
 class ItemModel;
 
 class PlayerModel : public Ref {
