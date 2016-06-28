@@ -5,7 +5,7 @@
 Scene * GameSceneController::createScene() {
 	auto scene = GameSceneController::createWithPhysics();
     scene->getPhysicsWorld()->setGravity(Vec2::ZERO);
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     return scene;
 }
 
@@ -82,12 +82,11 @@ void GameSceneController::bubbleExplode(Node * node) {
                 && model->getMap(rp.x, rp.y)->getBreakable()
                 && model->getMap(rp.x, rp.y)->getBlockWave()) break;
         }
-        CCLOG("%d, %d", (int)rp.x, (int)rp.y);
         auto body = PhysicsBody::createCircle(10);
         body->setGroup(GROUP_WAVE);
-        body->setCategoryBitmask(16);           // 010000
-        body->setCollisionBitmask(0);           // 000000
-        body->setContactTestBitmask(1 + 2 + 8); // 001011
+        body->setCategoryBitmask(16);               // 010000
+        body->setCollisionBitmask(0);               // 000000
+        body->setContactTestBitmask(1 + 2 + 4 + 8); // 001111
         view->addWave(gp, rp, 0.2f, 0, "wave.png", body);
     }
     view->removeNode(node);
@@ -124,6 +123,13 @@ bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
         blockBeAttacked(sb);
     } else if (gra == GROUP_BLOCK && grb == GROUP_WAVE) {
         blockBeAttacked(sa);
+    }
+
+    // Wave and wall
+    if (gra == GROUP_WAVE && grb == GROUP_WALL) {
+        sa->removeFromParent();
+    } else if (gra == GROUP_WALL && grb == GROUP_WAVE) {
+        sb->removeFromParent();
     }
 
     // Wave and bubble
@@ -217,7 +223,7 @@ void GameSceneController::loadMap(const std::string & mapName) {
                 body->setGroup(model->getMap(x, y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
                 body->setCategoryBitmask(model->getMap(x, y)->getBreakable() ? 2 : 4);          // 000010 : 000100
                 body->setCollisionBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);         // 000001 : 000001
-                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 + 16 : 1);  // 010001 : 000001
+                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 + 16 : 1 + 16);  // 010001 : 010001
                 view->configTilePhysics(x, y, body);
             }
         }
@@ -227,7 +233,7 @@ void GameSceneController::loadMap(const std::string & mapName) {
     edgeBody->setGroup(GROUP_WALL);
     edgeBody->setCategoryBitmask(4);    // 000100
     edgeBody->setCollisionBitmask(1);   // 000001
-    edgeBody->setContactTestBitmask(1); // 000001
+    edgeBody->setContactTestBitmask(1 + 16); // 010001
     view->configEdgePhysics(edgeBody);
 }
 
@@ -414,6 +420,7 @@ void GameSceneController::useProps(int p, const char * k) {
 void GameSceneController::playerBeAttacked(int p) {
     // Hard-coded damage
     model->players.at(p)->addHp(-10);
+    view->playHurtAnimation(p);
 }
 
 void GameSceneController::playerGetProps(int p, Node * pr) {
@@ -425,8 +432,10 @@ void GameSceneController::playerGetProps(int p, Node * pr) {
     } else if (props->getKey().compare(KEY_SHIELD) == 0) {
         ++model->players.at(p)->items[KEY_SHIELD];
         view->setPropsCount(p, 0, model->players.at(p)->items[KEY_SHIELD]);
+    } if (props->getKey().compare(KEY_BALLOON) == 0) {
+        ++model->players.at(p)->items[KEY_BUBBLE];
     } else {
-        props->applyToPlayer(model->players.at(p), props->getKey().compare(KEY_SHIELD) == 0);
+        props->applyToPlayer(model->players.at(p), false);
     }
     // clean
     model->removeMap(g.x, g.y);
@@ -436,7 +445,7 @@ void GameSceneController::playerGetProps(int p, Node * pr) {
 void GameSceneController::blockBeAttacked(Node * b) {
     auto g = view->getGridPosition(b);
     model->removeMap(g.x, g.y);
-    view->removeNode(b);
+    view->removeTile(g.x, g.y);
     generateProps(g);
 }
 
@@ -494,12 +503,15 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         changePlayerDirection(0, PlayerModel::Direction::right);
         break;
     case EventKeyboard::KeyCode::KEY_LEFT_SHIFT:
+        if (model->getStatus() != GameSceneModel::Status::running) break;
         placeBubble(0);
         break;
     case EventKeyboard::KeyCode::KEY_Q:
+        if (model->getStatus() != GameSceneModel::Status::running) break;
         useProps(0, KEY_MEDICINE);
         break;
     case EventKeyboard::KeyCode::KEY_E:
+        if (model->getStatus() != GameSceneModel::Status::running) break;
         useProps(0, KEY_SHIELD);
         break;
     // Player1
@@ -521,14 +533,17 @@ void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Even
         break;
     case EventKeyboard::KeyCode::KEY_RIGHT_SHIFT:
     case EventKeyboard::KeyCode::KEY_0:
+        if (model->getStatus() != GameSceneModel::Status::running) break;
         placeBubble(1);
         break;
     case EventKeyboard::KeyCode::KEY_U:
     case EventKeyboard::KeyCode::KEY_1:
+        if (model->getStatus() != GameSceneModel::Status::running) break;
         useProps(1, KEY_MEDICINE);
         break;
     case EventKeyboard::KeyCode::KEY_O:
     case EventKeyboard::KeyCode::KEY_2:
+        if (model->getStatus() != GameSceneModel::Status::running) break;
         useProps(1, KEY_SHIELD);
         break;
     // Default

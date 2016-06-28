@@ -132,3 +132,7 @@ void GameSceneView::playerProtected(int p, bool protect) {
 void GameSceneView::addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body) {
     objectsLayer->addWave(start, end, show, live, filename, body);
 }
+
+void GameSceneView::removeTile(int x, int y) {
+    objectsLayer->removeTile(x, y);
+}

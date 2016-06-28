@@ -27,15 +27,6 @@ bool ObjectsLayer::init(PhysicsWorld* world, GameSceneControllerDelegate * _cont
 
 	addEdge();
 
-	for (int i = 0; i < 2; i++) {
-		//players.pushBack(NULL);
-        auto hpbar = Sprite::create("hp-foreground.png");
-		hps.pushBack(hpbar);
-		//avatars.pushBack(NULL);
-        auto timer = ProgressTimer::create(hpbar);
-		hpTimers.pushBack(timer);
-	}
-
 	//player1->setPhysicsBody(PhysicsBody::createCircle(player1->getContentSize().height / 2));
 	//player1->setAnchorPoint(Vec2(0.5, 0.5));
 	//player1->setScale(0.5, 0.5);
@@ -54,6 +45,22 @@ bool ObjectsLayer::init(PhysicsWorld* world, GameSceneControllerDelegate * _cont
 	//addChild(backgroundImage);
 
 	//playerCount = 0;
+
+    Sprite * hpbar = Sprite::create("hp-foreground.png");
+    hps.pushBack(hpbar);
+    ProgressTimer * timer = ProgressTimer::create(hpbar);
+    timer->setAnchorPoint(Vec2(0.5f, 0));
+    timer->setPosition(origin.x + 36, origin.y + 56 + 108);
+    addChild(timer);
+    hpTimers.pushBack(timer);
+
+    hpbar = Sprite::create("hp-foreground.png");
+    hps.pushBack(hpbar);
+    timer = ProgressTimer::create(hpbar);
+    timer->setAnchorPoint(Vec2(0.5f, 0));
+    timer->setPosition(origin.x + layerSize.width - 36, origin.y + 56 + 108);
+    addChild(timer);
+    hpTimers.pushBack(timer);
 
 	return true;
 }
@@ -326,12 +333,7 @@ void ObjectsLayer::stopMovingAnimation(int p) {
 }
 
 void ObjectsLayer::playHurtAnimation(int p) {
-    FiniteTimeAction *fat = TintTo::create(0.1f, Color3B(255, 0, 0));
-    FiniteTimeAction *white = TintTo::create(0.1f, Color3B(255, 255, 255));
-    FiniteTimeAction *normal = TintBy::create(0.1f, 0, 0, 0);
-    
-    auto hurt = Sequence::create(fat, normal, white, normal);
-    players.at(p)->stopAction(RepeatForever::create(hurt));
+    players.at(p)->runAction(Repeat::create(Sequence::createWithTwoActions(TintBy::create(0.15f, 255, 0, 0), TintBy::create(0.15f, 0, 0, 0)), 3));
 }
 
 void ObjectsLayer::playerDie(int p) {
@@ -357,6 +359,7 @@ void ObjectsLayer::playerProtected(int p, bool protect) {
 
 }
 
+// show and live is deprecated
 void ObjectsLayer::addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body) {
     auto result = end - start;
     result.y = -result.y;
@@ -365,8 +368,8 @@ void ObjectsLayer::addWave(Vec2 start, Vec2 end, float show, float live, const s
     map->addChild(wave, 20);
     setGridPosition(wave, start.x, start.y);
     wave->setPhysicsBody(body);
-    wave->getPhysicsBody()->setVelocity(Vec2(result.x * 40, result.y * 40) / show);
-    wave->runAction(Sequence::createWithTwoActions(ScaleTo::create(show + live - 1.0f / 60, 1), CallFuncN::create([this](Node * node) {
+    wave->getPhysicsBody()->setVelocity(result / result.getLength() * 400);
+    wave->runAction(Sequence::createWithTwoActions(ScaleTo::create(result == Vec2::ZERO ? 0.1f / 60 : ((0.1f * result.getLength()) - 1.0f / 60), 1), CallFuncN::create([this](Node * node) {
         this->disposeWave(node);
     })));
 }
@@ -375,6 +378,14 @@ int ObjectsLayer::getZOrderOfRow(int y) {
     char layerName[128];
     sprintf(layerName, "Row%d", y);
     return map->getLayer(layerName)->getLocalZOrder();
+}
+
+void ObjectsLayer::removeTile(int x, int y) {
+    char layerName[128];
+    sprintf(layerName, "Row%d", y);
+    auto layer = map->getLayer(layerName);
+    layer->getTileAt(Vec2(x, y))->removeFromParent();
+    if (y > 0 && layer->getTileAt(Vec2(x, y - 1)) != nullptr) layer->getTileAt(Vec2(x, y - 1))->removeFromParent();
 }
 
 void ObjectsLayer::placeBubble(int x, int y, PhysicsBody * body, float time) {
@@ -401,8 +412,6 @@ void ObjectsLayer::addProps(int x, int y, const std::string & filename, PhysicsB
 }
 
 void ObjectsLayer::disposeWave(Node * wave) {
-    //wave->getPhysicsBody()->setVelocity(Vec2::ZERO);
-    //wave->getPhysicsBody()->removeFromWorld();
     wave->removeFromParent();
 }
 

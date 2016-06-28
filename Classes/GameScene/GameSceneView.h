@@ -49,6 +49,7 @@ public:
     void playerDie(int p);
     void playerProtected(int p, bool protect);
     void addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body);
+    void removeTile(int x, int y);
 private:
     GameSceneControllerDelegate * controller;
     BackgroundLayer * backgroundLayer;

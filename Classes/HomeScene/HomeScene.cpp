@@ -26,17 +26,17 @@ bool HomeScene::init() {
 
 	// MenuLayer
 	auto startGameButton = MenuItemImage::create("start-game-normal.png", "start-game-pressed.png", CC_CALLBACK_1(HomeScene::onStartGameClick , this));
-    startGameButton->setAnchorPoint(Vec2(0, 0.5));
-    startGameButton->setPosition(vo.x + 64, vo.y + 240);
+    startGameButton->setAnchorPoint(Vec2(1, 1));
+    startGameButton->setPosition(vo.x + vs.width - 152, vo.y + vs.height - 16);
     auto helpGameButton = MenuItemImage::create("help-game-normal.png", "help-game-pressed.png", CC_CALLBACK_1(HomeScene::onHelpGameClick, this));
-    helpGameButton->setAnchorPoint(Vec2(0, 0.5));
-    helpGameButton->setPosition(vo.x + 64, vo.y + 160);
+    helpGameButton->setAnchorPoint(Vec2(1, 1));
+    helpGameButton->setPosition(vo.x + vs.width - 84, vo.y + vs.height - 104);
 	auto aboutGameButton = MenuItemImage::create("about-game-normal.png", "about-game-pressed.png", CC_CALLBACK_1(HomeScene::onAboutGameClick, this));
-    aboutGameButton->setAnchorPoint(Vec2(1, 0.5));
-    aboutGameButton->setPosition(vo.x + vs.width - 64, vo.y + 240);
+    aboutGameButton->setAnchorPoint(Vec2(1, 1));
+    aboutGameButton->setPosition(vo.x + vs.width - 42, vo.y + vs.height - 192);
 	auto exitGameButton = MenuItemImage::create("exit-game-normal.png", "exit-game-pressed.png", CC_CALLBACK_1(HomeScene::onExitGameClick, this));
-    exitGameButton->setAnchorPoint(Vec2(1, 0.5));
-    exitGameButton->setPosition(vo.x + vs.width - 64, vo.y + 160);
+    exitGameButton->setAnchorPoint(Vec2(1, 1));
+    exitGameButton->setPosition(vo.x + vs.width - 16, vo.y + vs.height - 280);
 	auto menuLayer = Menu::create(startGameButton, helpGameButton, aboutGameButton, exitGameButton, nullptr);
     menuLayer->setPosition(vo.x, vo.y);
 	addChild(menuLayer, 1);

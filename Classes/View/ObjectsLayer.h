@@ -40,7 +40,7 @@ public:
     void playerProtected(int p, bool protect);
     void addWave(Vec2 start, Vec2 end, float show, float live, const std::string & filename, PhysicsBody * body);
     int getZOrderOfRow(int y);
-    //void bubbleScheduler(float delta);
+    void removeTile(int x, int y);
 private:
 	int playerCount;
 	Vec2 player1_pos;
