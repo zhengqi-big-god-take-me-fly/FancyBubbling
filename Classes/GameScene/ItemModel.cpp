@@ -95,8 +95,13 @@ ItemBlockModel * ItemBlockModel::create(Item * item) {
 
 bool ItemBlockModel::init(Item * item) {
     if (!item) return false;
+    item->retain();
     _item = item;
     _texture = item->getTexture();
     _breakable = false;
     return true;
+}
+
+ItemBlockModel::~ItemBlockModel() {
+    _item->release();
 }
