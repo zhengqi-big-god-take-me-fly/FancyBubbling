@@ -17,7 +17,6 @@ public :
     const float DEFAULT_HP = 100.0f;
     const float DEFAULT_SPEED = 10.0f;
     const float DEFAULT_SHOOT_RATE = 1.0f;
-//    
     typedef enum {
         dead,
         invincible,
