@@ -173,8 +173,8 @@ void GameSceneController::gameReady() {
     addPlayers();
 
     // Load hud
-    view->setHP(0, model->players.at(0)->getHp(), 100/*model->players.at(0)->getMaxHP()*/);
-    view->setHP(1, model->players.at(1)->getHp(), 100/*model->players.at(1)->getMaxHP()*/);
+    view->setHP(0, model->players.at(0)->getHp(), model->players.at(0)->MAX_HP);
+    view->setHP(1, model->players.at(1)->getHp(), model->players.at(1)->MAX_HP);
     view->setPropsCount(0, 0, 0);
     view->setPropsCount(0, 1, 0);
     view->setPropsCount(1, 0, 0);
