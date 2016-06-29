@@ -134,8 +134,10 @@ bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
     // Wave and block
     if (gra == GROUP_WAVE && grb == GROUP_BLOCK) {
         blockBeAttacked(sb);
+        sa->removeFromParent();
     } else if (gra == GROUP_BLOCK && grb == GROUP_WAVE) {
         blockBeAttacked(sa);
+        sb->removeFromParent();
     }
 
     // Wave and wall
@@ -221,7 +223,11 @@ void GameSceneController::gameResume() {
     view->hidePauseScreen();
 }
 
-void GameSceneController::gameEnd(int winner) {}
+void GameSceneController::gameEnd(int winner) {
+    view->playerDie(1 - winner);
+    //view->showWinner(winner);
+    model->setStatus(GameSceneModel::stop);
+}
 
 void GameSceneController::gameExit() {
     Director::getInstance()->popScene();
@@ -310,7 +316,7 @@ void GameSceneController::addPlayers() {
     p0->setDirection(PlayerModel::Direction::still);
     p0->setHp(100);
     //p0->setShootRate(1);
-    p0->setSpeed(80);
+    p0->setSpeed(120);
     p0->setStatus(PlayerModel::Status::alive);
     p0->items.insert(std::make_pair(KEY_BUBBLE, 1));
     p0->items.insert(std::make_pair(KEY_MEDICINE, 0));
@@ -331,7 +337,7 @@ void GameSceneController::addPlayers() {
     p1->setDirection(PlayerModel::Direction::still);
     p1->setHp(100);
     //p1->setShootRate(1);
-    p1->setSpeed(80);
+    p1->setSpeed(120);
     p1->setStatus(PlayerModel::Status::alive);
     p1->items.insert(std::make_pair(KEY_BUBBLE, 1));
     p1->items.insert(std::make_pair(KEY_MEDICINE, 0));
