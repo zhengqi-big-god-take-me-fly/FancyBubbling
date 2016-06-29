@@ -41,6 +41,7 @@ private:
     void gameStart();
     void gamePause();
     void gameResume();
+    void gameEnd(int winner);
     void gameExit();
     void loadMap(const std::string & mapName);
     void registerProps();

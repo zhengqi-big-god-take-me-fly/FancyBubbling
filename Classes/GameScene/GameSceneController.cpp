@@ -68,6 +68,11 @@ void GameSceneController::onExit() {
 
 void GameSceneController::update(float delta) {
     view->updatePlayerZ();
+    if (model->players.at(0)->getStatus() == PlayerModel::dead) {
+        gameEnd(0);
+    } else if (model->players.at(1)->getStatus() == PlayerModel::dead) {
+        gameEnd(1);
+    }
 }
 
 void GameSceneController::bubbleExplode(Node * node) {
@@ -215,6 +220,8 @@ void GameSceneController::gameResume() {
     // TODO: resume
     view->hidePauseScreen();
 }
+
+void GameSceneController::gameEnd(int winner) {}
 
 void GameSceneController::gameExit() {
     Director::getInstance()->popScene();
