@@ -76,14 +76,13 @@ void GameSceneController::update(float delta) {
 }
 
 void GameSceneController::bubbleExplode(Node * node) {
-    SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
     auto gp = view->getGridPosition(node);
-    view->removeNode(node);
-    model->removeMap(gp.x, gp.y);
     auto bubble = (BubbleModel *)model->getMap(gp.x, gp.y);
-    ++bubble->getOwner()->items[KEY_BUBBLE];
-
     auto range = bubble->getBlowRange();
+    view->removeNode(node);
+    ++bubble->getOwner()->items[KEY_BUBBLE];
+    model->removeMap(gp.x, gp.y);
+    // Add waves
     Vec2 md[4] = { Vec2(0, -1), Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0) };  // 4 directions: Up, Right, Down, Left
     for (int d = 0; d < 4; ++d) {
         auto rp = gp;
@@ -106,6 +105,8 @@ void GameSceneController::bubbleExplode(Node * node) {
         body->setContactTestBitmask(1 + 2 + 4 + 8); // 001111
         view->addWave(gp, rp, 0.2f, 0, "wave.png", body);
     }
+    // Play sound
+    SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
 }
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
