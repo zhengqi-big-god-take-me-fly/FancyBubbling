@@ -11,6 +11,7 @@ public:
 	//static Scene * createScene();
 	CREATE_FUNC(HudLayer)
 	virtual bool init();
+	void displayItemCount(int player, int itemType, int count);
 	void menuCloseCallback(Ref *pSender);
 private:
 	//Sprite *backgroundImage;

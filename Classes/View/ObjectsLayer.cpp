@@ -207,7 +207,7 @@ void ObjectsLayer::addPlayer(int index, int x, int y, const char * filename)
 void ObjectsLayer::setHP(int p, int hp, int maxHp)
 {
 	if (p < 0 || p > 2 || p > hps.size()) return;
-	if (hps.at(p) == NULL) {
+	/*if (hps.at(p) == NULL) {
 		Sprite *myHP = Sprite::create("res/hp-foreground.png", CC_RECT_PIXELS_TO_POINTS(Rect(28, 56, 12, 454)));
 		hps.replace(p, myHP);
 		hpTimers.replace(p, ProgressTimer::create(myHP));
@@ -217,7 +217,7 @@ void ObjectsLayer::setHP(int p, int hp, int maxHp)
 		(hpTimers.at(p))->setBarChangeRate(Point(1, 0));
 		(hpTimers.at(p))->setMidpoint(Point(0, 1));
 		(hpTimers.at(p))->setPosition(convertToNodeSpace(Vec2(28, 56)));
-	}
+	}*/
 	(hpTimers.at(p))->setPercentage(float(hp)/maxHp);
 }
 

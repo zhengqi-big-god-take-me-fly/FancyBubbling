@@ -22,24 +22,41 @@ bool HudLayer::init() {
     player_1_itemHolder_1->setAnchorPoint(Vec2(0, 0));
     player_1_itemHolder_1->setPosition(origin.x + 58, origin.y + 356);
     addChild(player_1_itemHolder_1);
-
+	player_1_itemButton_1 = Sprite::create("MEDICINE-ui.png");
+	player_1_itemButton_1->setAnchorPoint(Vec2(0, 0));
+	player_1_itemButton_1->setPosition(origin.x + 58, origin.y + 398);
+	addChild(player_1_itemButton_1);
 
 
     player_1_itemHolder_2 = Sprite::create("game-props-box.png");
     player_1_itemHolder_2->setAnchorPoint(Vec2(0, 0));
-    player_1_itemHolder_2->setPosition(origin.x + 60, origin.y + 188);
+    player_1_itemHolder_2->setPosition(origin.x + 58, origin.y + 188);
     addChild(player_1_itemHolder_2);
-
+	player_1_itemButton_2 = Sprite::create("SHIELD-ui.png");
+	player_1_itemButton_2->setAnchorPoint(Vec2(0, 0));
+	player_1_itemButton_2->setPosition(origin.x + 58, origin.y + 230);
+	addChild(player_1_itemButton_2);
 
     player_2_itemHolder_1 = Sprite::create("game-props-box.png");
     player_2_itemHolder_1->setAnchorPoint(Vec2(1, 0));
     player_2_itemHolder_1->setPosition(origin.x + layerSize.width - 58, origin.y + 188);
     addChild(player_2_itemHolder_1);
 
+
     player_2_itemHolder_2 = Sprite::create("game-props-box.png");
     player_2_itemHolder_2->setAnchorPoint(Vec2(1, 0));
     player_2_itemHolder_2->setPosition(origin.x + layerSize.width - 58, origin.y + 356);
     addChild(player_2_itemHolder_2);
+
+	player_2_itemButton_1 = Sprite::create("MEDICINE-ui.png");
+	player_2_itemButton_1->setAnchorPoint(Vec2(0, 0));
+	player_2_itemButton_1->setPosition(origin.x + layerSize.width - 58, origin.y + 398);
+	addChild(player_2_itemButton_1);
+	player_2_itemButton_2 = Sprite::create("SHIELD-ui.png");
+	player_2_itemButton_2->setAnchorPoint(Vec2(0, 0));
+	player_2_itemButton_2->setPosition(origin.x + layerSize.width - 58, origin.x + 230);
+	addChild(player_2_itemButton_2);
+
 
     //player_2_rightItemHolder->setContentSize(Size(72, 144));
     //player_1_leftItemButton;
@@ -76,4 +93,19 @@ bool HudLayer::init() {
 
 void HudLayer::menuCloseCallback(Ref * pSender) {
     // Implemented By Controller
+}
+void HudLayer::displayItemCount(int player, int itemType, int count) {
+	if (count < 0) return;
+	char s[20];
+	itoa(count, s, 10);
+
+	auto itemCount = Label::createWithTTF(s, "fonts/theme-font.ttf", 15, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+	itemCount->setAnchorPoint(Vec2(0, 0));
+	
+	int posX, posY;
+	posX = origin.x + (player == 0 ? 58 : layerSize.width - 58);
+	posY = origin.y + (itemType == 0 ? 458 : 290);
+	
+	itemCount->setPosition(Vec2(posX, posY));
+	addChild(itemCount);
 }
