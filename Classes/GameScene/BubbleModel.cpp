@@ -3,6 +3,7 @@
 
 bool BubbleModel::init() {
     _breakable = false;
+    _key = "bubble";
     return true;
 }
 
