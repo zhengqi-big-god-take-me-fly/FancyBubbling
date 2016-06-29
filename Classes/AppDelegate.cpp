@@ -1,7 +1,10 @@
 #include "AppDelegate.h"
 #include "HomeScene/HomeScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+
+using namespace CocosDenshion;
 
 AppDelegate::AppDelegate() {
 
@@ -44,6 +47,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     FileUtils::getInstance()->addSearchPath("res");
     FileUtils::getInstance()->addSearchPath("maps");
 
+    // Load sfx
+    SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/background-music.mp3");
+    SimpleAudioEngine::getInstance()->preloadEffect("sfx/bubble-explosion-sound.mp3");
+
     // create a scene. it's an autorelease object
     auto scene = HomeScene::createScene();
 
@@ -58,7 +65,7 @@ void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
     // if you use SimpleAudioEngine, it must be pause
-    // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -66,5 +73,5 @@ void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
-    // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

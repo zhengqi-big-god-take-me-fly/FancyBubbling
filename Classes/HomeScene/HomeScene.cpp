@@ -1,5 +1,8 @@
 #include "HomeScene.h"
 #include "../GameScene/GameSceneController.h"
+#include "SimpleAudioEngine.h"
+
+using namespace CocosDenshion;
 
 Scene * HomeScene::createScene() {
 	auto scene = Scene::create();
@@ -40,6 +43,11 @@ bool HomeScene::init() {
 	auto menuLayer = Menu::create(startGameButton, helpGameButton, aboutGameButton, exitGameButton, nullptr);
     menuLayer->setPosition(vo.x, vo.y);
 	addChild(menuLayer, 1);
+
+    //SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.mp3", true);
+    //auto bb = SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying();
+    //auto bgmv = SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+    //SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
 
 	return true;
 }

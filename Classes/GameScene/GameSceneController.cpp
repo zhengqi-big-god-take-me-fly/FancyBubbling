@@ -1,6 +1,9 @@
 #include "GameSceneController.h"
 #include "BubbleModel.h"
 #include "ItemModel.h"
+#include "SimpleAudioEngine.h"
+
+using namespace CocosDenshion;
 
 Scene * GameSceneController::createScene() {
 	auto scene = GameSceneController::createWithPhysics();
@@ -48,6 +51,10 @@ bool GameSceneController::initWithPhysics() {
 
     scheduleUpdate();
 
+    if (SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying())
+        SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.mp3", true);
+
     return true;
 }
 
@@ -91,6 +98,7 @@ void GameSceneController::bubbleExplode(Node * node) {
     }
     view->removeNode(node);
     ++bubble->getOwner()->items[KEY_BUBBLE];
+    SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
 }
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
