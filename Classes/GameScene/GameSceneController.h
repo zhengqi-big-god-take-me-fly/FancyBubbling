@@ -41,6 +41,7 @@ private:
     void gameStart();
     void gamePause();
     void gameResume();
+    void gameEnd(int winner);
     void gameExit();
     void loadMap(const std::string & mapName);
     void registerProps();
@@ -50,7 +51,7 @@ private:
     bool isPlayerAndBody(int a, int b);
     void changePlayerDirection(int p, PlayerModel::Direction d);
     void placeBubble(int p);
-    void useProps(int p, const char * k);
+    void useProps(int p, const std::string & k);
     void playerBeAttacked(int p);
     void playerGetProps(int p, Node * pr);
     void blockBeAttacked(Node * b);

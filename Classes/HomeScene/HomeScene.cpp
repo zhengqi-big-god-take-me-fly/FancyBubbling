@@ -44,10 +44,7 @@ bool HomeScene::init() {
     menuLayer->setPosition(vo.x, vo.y);
 	addChild(menuLayer, 1);
 
-    //SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.mp3", true);
-    //auto bb = SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying();
-    //auto bgmv = SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
-    //SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
+    SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.wav", true);
 
 	return true;
 }

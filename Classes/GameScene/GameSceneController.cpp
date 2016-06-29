@@ -53,7 +53,7 @@ bool GameSceneController::initWithPhysics() {
 
     if (SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying())
         SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-    SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.mp3", true);
+    SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.wav", true);
 
     return true;
 }
@@ -68,11 +68,21 @@ void GameSceneController::onExit() {
 
 void GameSceneController::update(float delta) {
     view->updatePlayerZ();
+    if (model->players.at(0)->getStatus() == PlayerModel::dead) {
+        gameEnd(0);
+    } else if (model->players.at(1)->getStatus() == PlayerModel::dead) {
+        gameEnd(1);
+    }
 }
 
 void GameSceneController::bubbleExplode(Node * node) {
+    SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
     auto gp = view->getGridPosition(node);
+    view->removeNode(node);
+    model->removeMap(gp.x, gp.y);
     auto bubble = (BubbleModel *)model->getMap(gp.x, gp.y);
+    ++bubble->getOwner()->items[KEY_BUBBLE];
+
     auto range = bubble->getBlowRange();
     Vec2 md[4] = { Vec2(0, -1), Vec2(1, 0), Vec2(0, 1), Vec2(-1, 0) };  // 4 directions: Up, Right, Down, Left
     for (int d = 0; d < 4; ++d) {
@@ -96,9 +106,6 @@ void GameSceneController::bubbleExplode(Node * node) {
         body->setContactTestBitmask(1 + 2 + 4 + 8); // 001111
         view->addWave(gp, rp, 0.2f, 0, "wave.png", body);
     }
-    view->removeNode(node);
-    ++bubble->getOwner()->items[KEY_BUBBLE];
-    SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
 }
 
 bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
@@ -129,8 +136,10 @@ bool GameSceneController::spriteOnContactBegin(PhysicsContact & contact) {
     // Wave and block
     if (gra == GROUP_WAVE && grb == GROUP_BLOCK) {
         blockBeAttacked(sb);
+        sa->removeFromParent();
     } else if (gra == GROUP_BLOCK && grb == GROUP_WAVE) {
         blockBeAttacked(sa);
+        sb->removeFromParent();
     }
 
     // Wave and wall
@@ -214,6 +223,12 @@ void GameSceneController::gameResume() {
     model->setStatus(GameSceneModel::Status::running);
     // TODO: resume
     view->hidePauseScreen();
+}
+
+void GameSceneController::gameEnd(int winner) {
+    view->playerDie(1 - winner);
+    //view->showWinner(winner);
+    model->setStatus(GameSceneModel::stop);
 }
 
 void GameSceneController::gameExit() {
@@ -303,7 +318,7 @@ void GameSceneController::addPlayers() {
     p0->setDirection(PlayerModel::Direction::still);
     p0->setHp(100);
     //p0->setShootRate(1);
-    p0->setSpeed(80);
+    p0->setSpeed(120);
     p0->setStatus(PlayerModel::Status::alive);
     p0->items.insert(std::make_pair(KEY_BUBBLE, 1));
     p0->items.insert(std::make_pair(KEY_MEDICINE, 0));
@@ -324,7 +339,7 @@ void GameSceneController::addPlayers() {
     p1->setDirection(PlayerModel::Direction::still);
     p1->setHp(100);
     //p1->setShootRate(1);
-    p1->setSpeed(80);
+    p1->setSpeed(120);
     p1->setStatus(PlayerModel::Status::alive);
     p1->items.insert(std::make_pair(KEY_BUBBLE, 1));
     p1->items.insert(std::make_pair(KEY_MEDICINE, 0));
@@ -399,9 +414,9 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
 }
 
 void GameSceneController::placeBubble(int p) {
-    if (model->players.at(p)->items[KEY_BUBBLE] > 0) {
+    auto pp = view->getPlayerGridPosition(p);
+    if (model->players.at(p)->items[KEY_BUBBLE] > 0 && model->getMap(pp.x, pp.y)->getKey() != "bubble") {
         --model->players.at(p)->items[KEY_BUBBLE];
-        auto pp = view->getPlayerGridPosition(p);
         auto bm = BubbleModel::create();
         bm->setBlowDelay(model->players.at(p)->getBlowDelay());
         bm->setBlowRange(model->players.at(p)->getBlowRange());
@@ -418,10 +433,15 @@ void GameSceneController::placeBubble(int p) {
     }
 }
 
-void GameSceneController::useProps(int p, const char * k) {
-    // TODO: Use props (TBD)
+void GameSceneController::useProps(int p, const std::string & k) {
     if (model->players.at(p)->items[k] > 0) {
         --model->players.at(p)->items[k];
+        if (k.compare(KEY_MEDICINE) == 0) {
+            Item::create(KEY_MEDICINE)->applyToPlayer(model->players.at(p), false);
+        } else if (k.compare(KEY_SHIELD) == 0) {
+            Item::create(KEY_SHIELD)->applyToPlayer(model->players.at(p), true);
+            view->playerProtected(p, true);
+        }
     }
 }
 
