@@ -53,7 +53,7 @@ bool GameSceneController::initWithPhysics() {
 
     if (SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying())
         SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-    SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.mp3", true);
+    SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/background-music.wav", true);
 
     return true;
 }
@@ -415,6 +415,7 @@ void GameSceneController::placeBubble(int p) {
         body->setCollisionBitmask(0);           // 000000 Temp to fix bubble collision
         body->setContactTestBitmask(1 + 16);    // 010001
         view->placeBubble(pp.x, pp.y, body, model->players.at(p)->getBlowDelay());
+        SimpleAudioEngine::getInstance()->playEffect("sfx/place-bubble.wav");
     }
 }
 

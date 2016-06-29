@@ -48,8 +48,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     FileUtils::getInstance()->addSearchPath("maps");
 
     // Load sfx
-    SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/background-music.mp3");
+    SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/background-music.wav");
     SimpleAudioEngine::getInstance()->preloadEffect("sfx/bubble-explosion-sound.mp3");
+    SimpleAudioEngine::getInstance()->preloadEffect("sfx/place-bubble.wav");
 
     // create a scene. it's an autorelease object
     auto scene = HomeScene::createScene();
