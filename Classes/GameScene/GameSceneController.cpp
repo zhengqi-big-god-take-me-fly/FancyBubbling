@@ -103,6 +103,7 @@ void GameSceneController::bubbleExplode(Node * node) {
     }
     view->removeNode(node);
     ++bubble->getOwner()->items[KEY_BUBBLE];
+    model->removeMap(gp.x, gp.y);
     SimpleAudioEngine::getInstance()->playEffect("sfx/bubble-explosion-sound.mp3");
 }
 
@@ -412,9 +413,9 @@ void GameSceneController::changePlayerDirection(int p, PlayerModel::Direction d)
 }
 
 void GameSceneController::placeBubble(int p) {
-    if (model->players.at(p)->items[KEY_BUBBLE] > 0) {
+    auto pp = view->getPlayerGridPosition(p);
+    if (model->players.at(p)->items[KEY_BUBBLE] > 0 && model->getMap(pp.x, pp.y)->getKey() != "bubble") {
         --model->players.at(p)->items[KEY_BUBBLE];
-        auto pp = view->getPlayerGridPosition(p);
         auto bm = BubbleModel::create();
         bm->setBlowDelay(model->players.at(p)->getBlowDelay());
         bm->setBlowRange(model->players.at(p)->getBlowRange());
@@ -432,10 +433,16 @@ void GameSceneController::placeBubble(int p) {
     }
 }
 
-void GameSceneController::useProps(int p, const char * k) {
+void GameSceneController::useProps(int p, const std::string & k) {
     // TODO: Use props (TBD)
     if (model->players.at(p)->items[k] > 0) {
         --model->players.at(p)->items[k];
+        if (k.compare(KEY_MEDICINE) == 0) {
+            Item::create(KEY_MEDICINE)->applyToPlayer(model->players.at(p), false);
+        } else if (k.compare(KEY_SHIELD) == 0) {
+            Item::create(KEY_SHIELD)->applyToPlayer(model->players.at(p), true);
+            view->playerProtected(p, true);
+        }
     }
 }
 
