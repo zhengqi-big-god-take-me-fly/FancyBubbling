@@ -68,9 +68,9 @@ void GameSceneController::onExit() {
 
 void GameSceneController::update(float delta) {
     view->updatePlayerZ();
-    if (model->players.at(0)->getStatus() == PlayerModel::dead) {
+    if (model->players.at(0)->getHp() <= 0) {
         gameEnd(0);
-    } else if (model->players.at(1)->getStatus() == PlayerModel::dead) {
+    } else if (model->players.at(1)->getHp() <= 0) {
         gameEnd(1);
     }
 }
@@ -218,12 +218,14 @@ void GameSceneController::gamePause() {
     model->setStatus(GameSceneModel::Status::pause);
     // TODO: pause
     view->showPauseScreen();
+    Director::getInstance()->pause();
 }
 
 void GameSceneController::gameResume() {
     model->setStatus(GameSceneModel::Status::running);
     // TODO: resume
     view->hidePauseScreen();
+    Director::getInstance()->resume();
 }
 
 void GameSceneController::gameEnd(int winner) {
@@ -245,9 +247,9 @@ void GameSceneController::loadMap(const std::string & mapName) {
                 auto body = PhysicsBody::createBox(Size(40, 40));
                 body->setDynamic(false);
                 body->setGroup(model->getMap(x, y)->getBreakable() ? GROUP_BLOCK : GROUP_WALL);
-                body->setCategoryBitmask(model->getMap(x, y)->getBreakable() ? 2 : 4);          // 000010 : 000100
-                body->setCollisionBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);         // 000001 : 000001
-                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 + 16 : 1 + 16);  // 010001 : 010001
+                body->setCategoryBitmask(model->getMap(x, y)->getBreakable() ? 2 : 4);              // 000010 : 000100
+                body->setCollisionBitmask(model->getMap(x, y)->getBreakable() ? 1 : 1);             // 000001 : 000001
+                body->setContactTestBitmask(model->getMap(x, y)->getBreakable() ? 1 + 16 : 1 + 16); // 010001 : 010001
                 view->configTilePhysics(x, y, body);
             }
         }
@@ -255,9 +257,9 @@ void GameSceneController::loadMap(const std::string & mapName) {
     auto edgeBody = PhysicsBody::createEdgeBox(Size(600, 520));
     edgeBody->setDynamic(false);
     edgeBody->setGroup(GROUP_WALL);
-    edgeBody->setCategoryBitmask(4);    // 000100
-    edgeBody->setCollisionBitmask(1);   // 000001
-    edgeBody->setContactTestBitmask(1 + 16); // 010001
+    edgeBody->setCategoryBitmask(4);            // 000100
+    edgeBody->setCollisionBitmask(1);           // 000001
+    edgeBody->setContactTestBitmask(1 + 16);    // 010001
     view->configEdgePhysics(edgeBody);
 }
 
@@ -283,6 +285,7 @@ void GameSceneController::registerProps() {
     // SHIELD
     props = Item::create();
     props->setAppearRate(16);
+    props->setActiveDuration(12);
     props->setOriginStatus(PlayerModel::Status::invincible);
     Item::registerItem(props, KEY_SHIELD);
 
@@ -442,6 +445,9 @@ void GameSceneController::useProps(int p, const std::string & k) {
         } else if (k.compare(KEY_SHIELD) == 0) {
             Item::create(KEY_SHIELD)->applyToPlayer(model->players.at(p), true);
             view->playerProtected(p, true);
+            scheduleOnce([this, p](float delta) {
+                this->view->playerProtected(p, false);
+            }, 12, "playerProtected");
         }
     }
 }
@@ -499,22 +505,27 @@ void GameSceneController::countdown(float delta) {
         view->notifyReady("START!");
         unschedule(schedule_selector(GameSceneController::countdown));
         gameStart();
+        SimpleAudioEngine::getInstance()->playEffect("sfx/start-sound.wav");
     } else {
         view->notifyReady(std::to_string(time).c_str());
         model->setTime(time - 1);
+        SimpleAudioEngine::getInstance()->playEffect("sfx/count-sound.wav");
     }
 }
 
 void GameSceneController::keyboardOnKeyPressed(EventKeyboard::KeyCode code, Event * e) {
-    if (model->getStatus() == model->pause) {
+    if (model->getStatus() == GameSceneModel::Status::pause) {
         if (code == EventKeyboard::KeyCode::KEY_ESCAPE) {
             gameExit();
         } else {
             gameResume();
         }
         return;
-    } else if (model->getStatus() == model->running && code == EventKeyboard::KeyCode::KEY_ESCAPE) {
+    } else if (model->getStatus() == GameSceneModel::Status::running && code == EventKeyboard::KeyCode::KEY_ESCAPE) {
         gamePause();
+        return;
+    } else if (model->getStatus() == GameSceneModel::Status::stop) {
+        gameExit();
         return;
     }
     switch (code) {

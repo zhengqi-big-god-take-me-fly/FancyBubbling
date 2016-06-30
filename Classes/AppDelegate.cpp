@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "HomeScene/HomeScene.h"
 #include "SimpleAudioEngine.h"
+#include "Utils/Utils.h"
 
 USING_NS_CC;
 
@@ -47,10 +48,18 @@ bool AppDelegate::applicationDidFinishLaunching() {
     FileUtils::getInstance()->addSearchPath("res");
     FileUtils::getInstance()->addSearchPath("maps");
 
+    // Load animations
+    auto sfc = SpriteFrameCache::getInstance();
+    sfc->addSpriteFramesWithFile("protected.plist");
+    Utils::loadAnimation("protected", "protected-%d.png", 0, 14, 1.0f / 10);
+
     // Load sfx
     SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/background-music.wav");
     SimpleAudioEngine::getInstance()->preloadEffect("sfx/bubble-explosion-sound.mp3");
     SimpleAudioEngine::getInstance()->preloadEffect("sfx/place-bubble.wav");
+    SimpleAudioEngine::getInstance()->preloadEffect("sfx/use-props-sound.wav");
+    SimpleAudioEngine::getInstance()->preloadEffect("sfx/start-sound.wav");
+    SimpleAudioEngine::getInstance()->preloadEffect("sfx/count-sound.wav");
 
     // create a scene. it's an autorelease object
     auto scene = HomeScene::createScene();
