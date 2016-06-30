@@ -343,7 +343,7 @@ void ObjectsLayer::playerDie(int p) {
 
 void ObjectsLayer::playerProtected(int p, bool protect) {
     // add the file into the animation list;
-    std::string protection = "";
+ /*   std::string protection = "";
     char frameName[128];
     Vector<SpriteFrame *> caches;
     for (int i = 0; i < 4; i++) {
@@ -351,11 +351,14 @@ void ObjectsLayer::playerProtected(int p, bool protect) {
         SpriteFrame* time = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName);
         caches.pushBack(time);
     }
-
-    Animation *anim = Animation::createWithSpriteFrames(caches, 0.5);
-    Animate *ani = Animate::create(anim);
-    ani->setTag(11111);
-    players.at(p)->runAction(RepeatForever::create(ani));
+*/
+	if (!protect) players.at(p)->stopActionByTag(11111);
+	else {
+		Animation *anim = AnimationCache::getInstance()->animationByName("protected");
+		Animate *ani = Animate::create(anim);
+		ani->setTag(11111);
+		players.at(p)->runAction(RepeatForever::create(ani));
+	}
 
 }
 

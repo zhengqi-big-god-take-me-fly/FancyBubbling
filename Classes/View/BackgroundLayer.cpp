@@ -7,6 +7,19 @@
 //	return scene;
 //}
 
+void BackgroundLayer::winGame(int p) {
+	auto winScene = Sprite::create("winner.png");
+	winScene->setAnchorPoint(Vec2(0, 0));
+	winScene->setPosition(origin.x, origin.y);
+
+	std::string s = (p == 0 ? "avatar-0.png" : "avatar-1.png");
+	auto winPlayer = Sprite::create(s);
+	winPlayer->setAnchorPoint(Vec2(0, 0));
+	winPlayer->setPosition(origin.x + layerSize.width / 2, origin.y + 182);
+	addChild(winScene, 1);
+	addChild(winPlayer, 2);
+}
+
 bool BackgroundLayer::init() {
 	if (!Layer::init()) {
 		return false;

@@ -13,6 +13,7 @@ public:
 	virtual bool init();
 	void displayItemCount(int player, int itemType, int count);
 	void menuCloseCallback(Ref *pSender);
+	void setHP(int p, int hp, int maxHp);
 private:
 	//Sprite *backgroundImage;
 
@@ -44,7 +45,8 @@ private:
 	Vec2 backgroundPos;
 	Vec2 origin;
 	Size layerSize;
-
+	Vector<Node *> hps;
+	Vector<ProgressTimer *> hpTimers;
 };
 
 #endif // !__HUD_LAYER_H__

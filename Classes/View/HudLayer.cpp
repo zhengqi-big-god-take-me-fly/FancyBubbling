@@ -84,11 +84,46 @@ bool HudLayer::init() {
     hpBar2->setPosition(origin.x + layerSize.width - 24, origin.y + layerSize.height - 16);
     addChild(hpBar2);
 
+	Sprite * hpbar = Sprite::create("hp-foreground.png");
+	hps.pushBack(hpbar);
+	ProgressTimer * timer = ProgressTimer::create(hpbar);
+	timer->setAnchorPoint(Vec2(0.5f, 0));
+	timer->setPosition(origin.x + origin.x + 24, origin.y + layerSize.height - 16);
+	addChild(timer);
+	hpTimers.pushBack(timer);
+
+	hpbar = Sprite::create("hp-foreground.png");
+	hps.pushBack(hpbar);
+	timer = ProgressTimer::create(hpbar);
+	timer->setAnchorPoint(Vec2(0.5f, 0));
+	timer->setPosition(origin.x + layerSize.width - 24, origin.y + layerSize.height - 16);
+	addChild(timer);
+	hpTimers.pushBack(timer);
+
+
+
     warningMessage = Label::createWithTTF("按Esc键打开菜单", "fonts/theme-font.ttf", 20, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
     warningMessage->setPosition(origin.x + layerSize.width / 2, origin.y + 28);
     addChild(warningMessage);
 
     return true;
+}
+
+void HudLayer::setHP(int p, int hp, int maxHp)
+{
+	if (p < 0 || p > 2 || p > hps.size()) return;
+	/*if (hps.at(p) == NULL) {
+	Sprite *myHP = Sprite::create("res/hp-foreground.png", CC_RECT_PIXELS_TO_POINTS(Rect(28, 56, 12, 454)));
+	hps.replace(p, myHP);
+	hpTimers.replace(p, ProgressTimer::create(myHP));
+	(hpTimers.at(p))->setScaleX(90);
+	(hpTimers.at(p))->setAnchorPoint(Vec2(0, 0));
+	(hpTimers.at(p))->setType(ProgressTimerType::BAR);
+	(hpTimers.at(p))->setBarChangeRate(Point(1, 0));
+	(hpTimers.at(p))->setMidpoint(Point(0, 1));
+	(hpTimers.at(p))->setPosition(convertToNodeSpace(Vec2(28, 56)));
+	}*/
+	(hpTimers.at(p))->setPercentage(1 / (float(hp) / maxHp));
 }
 
 void HudLayer::menuCloseCallback(Ref * pSender) {
@@ -109,3 +144,4 @@ void HudLayer::displayItemCount(int player, int itemType, int count) {
 	itemCount->setPosition(Vec2(posX, posY));
 	addChild(itemCount);
 }
+

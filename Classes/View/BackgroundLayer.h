@@ -9,6 +9,7 @@ class BackgroundLayer : public Layer {
 public:
     CREATE_FUNC(BackgroundLayer)
         virtual bool init();
+	void winGame(int p);
 private:
     Sprite *backgroundImage;
     Sprite *uiBackground;
