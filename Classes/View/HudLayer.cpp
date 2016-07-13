@@ -23,8 +23,8 @@ bool HudLayer::init() {
     player_1_itemHolder_1->setPosition(origin.x + 58, origin.y + 356);
     addChild(player_1_itemHolder_1);
 	player_1_itemButton_1 = Sprite::create("MEDICINE-ui.png");
-	player_1_itemButton_1->setAnchorPoint(Vec2(0, 0));
-	player_1_itemButton_1->setPosition(origin.x + 58, origin.y + 398);
+	player_1_itemButton_1->setAnchorPoint(Vec2(0.5f, 0));
+	player_1_itemButton_1->setPosition(origin.x + 96, origin.y + 398);
 	addChild(player_1_itemButton_1);
 
 
@@ -33,8 +33,8 @@ bool HudLayer::init() {
     player_1_itemHolder_2->setPosition(origin.x + 58, origin.y + 188);
     addChild(player_1_itemHolder_2);
 	player_1_itemButton_2 = Sprite::create("SHIELD-ui.png");
-	player_1_itemButton_2->setAnchorPoint(Vec2(0, 0));
-	player_1_itemButton_2->setPosition(origin.x + 58, origin.y + 230);
+	player_1_itemButton_2->setAnchorPoint(Vec2(0.5f, 0));
+	player_1_itemButton_2->setPosition(origin.x + 96, origin.y + 230);
 	addChild(player_1_itemButton_2);
 
     player_2_itemHolder_1 = Sprite::create("game-props-box.png");
@@ -49,12 +49,12 @@ bool HudLayer::init() {
     addChild(player_2_itemHolder_2);
 
 	player_2_itemButton_1 = Sprite::create("MEDICINE-ui.png");
-	player_2_itemButton_1->setAnchorPoint(Vec2(0, 0));
-	player_2_itemButton_1->setPosition(origin.x + layerSize.width - 58, origin.y + 398);
+	player_2_itemButton_1->setAnchorPoint(Vec2(0.5f, 0));
+	player_2_itemButton_1->setPosition(origin.x + layerSize.width - 96, origin.y + 398);
 	addChild(player_2_itemButton_1);
 	player_2_itemButton_2 = Sprite::create("SHIELD-ui.png");
-	player_2_itemButton_2->setAnchorPoint(Vec2(0, 0));
-	player_2_itemButton_2->setPosition(origin.x + layerSize.width - 58, origin.x + 230);
+	player_2_itemButton_2->setAnchorPoint(Vec2(0.5f, 0));
+	player_2_itemButton_2->setPosition(origin.x + layerSize.width - 96, origin.x + 230);
 	addChild(player_2_itemButton_2);
 
 
@@ -88,7 +88,11 @@ bool HudLayer::init() {
 	hps.pushBack(hpbar);
 	ProgressTimer * timer = ProgressTimer::create(hpbar);
 	timer->setAnchorPoint(Vec2(0.5f, 0));
-	timer->setPosition(origin.x + origin.x + 24, origin.y + layerSize.height - 16);
+	timer->setPosition(origin.x + 36, origin.y + 164);
+    timer->setType(ProgressTimerType::BAR);
+    timer->setBarChangeRate(Vec2(0, 1));
+    timer->setMidpoint(Vec2(0, 0));
+    timer->setPercentage(100);
 	addChild(timer);
 	hpTimers.pushBack(timer);
 
@@ -96,7 +100,11 @@ bool HudLayer::init() {
 	hps.pushBack(hpbar);
 	timer = ProgressTimer::create(hpbar);
 	timer->setAnchorPoint(Vec2(0.5f, 0));
-	timer->setPosition(origin.x + layerSize.width - 24, origin.y + layerSize.height - 16);
+	timer->setPosition(origin.x + layerSize.width - 36, origin.y + 164);
+    timer->setType(ProgressTimerType::BAR);
+    timer->setBarChangeRate(Vec2(0, 1));
+    timer->setMidpoint(Vec2(0, 0));
+    timer->setPercentage(100);
 	addChild(timer);
 	hpTimers.pushBack(timer);
 
@@ -106,24 +114,26 @@ bool HudLayer::init() {
     warningMessage->setPosition(origin.x + layerSize.width / 2, origin.y + 28);
     addChild(warningMessage);
 
+    props[0][0] = Label::createWithTTF("", "fonts/theme-font.ttf", 36, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+    props[0][0]->setPosition(origin.x + 96, origin.y + 377);
+    addChild(props[0][0]);
+    props[0][1] = Label::createWithTTF("", "fonts/theme-font.ttf", 36, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+    props[0][1]->setPosition(origin.x + 96, origin.y + 209);
+    addChild(props[0][1]);
+    props[1][0] = Label::createWithTTF("", "fonts/theme-font.ttf", 36, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+    props[1][0]->setPosition(origin.x + layerSize.width - 96, origin.y + 377);
+    addChild(props[1][0]);
+    props[1][1] = Label::createWithTTF("", "fonts/theme-font.ttf", 36, Size::ZERO, TextHAlignment::CENTER, TextVAlignment::CENTER);
+    props[1][1]->setPosition(origin.x + layerSize.width - 96, origin.y + 209);
+    addChild(props[1][1]);
+
     return true;
 }
 
 void HudLayer::setHP(int p, int hp, int maxHp)
 {
 	if (p < 0 || p > 2 || p > hps.size()) return;
-	/*if (hps.at(p) == NULL) {
-	Sprite *myHP = Sprite::create("res/hp-foreground.png", CC_RECT_PIXELS_TO_POINTS(Rect(28, 56, 12, 454)));
-	hps.replace(p, myHP);
-	hpTimers.replace(p, ProgressTimer::create(myHP));
-	(hpTimers.at(p))->setScaleX(90);
-	(hpTimers.at(p))->setAnchorPoint(Vec2(0, 0));
-	(hpTimers.at(p))->setType(ProgressTimerType::BAR);
-	(hpTimers.at(p))->setBarChangeRate(Point(1, 0));
-	(hpTimers.at(p))->setMidpoint(Point(0, 1));
-	(hpTimers.at(p))->setPosition(convertToNodeSpace(Vec2(28, 56)));
-	}*/
-	(hpTimers.at(p))->setPercentage(1 / (float(hp) / maxHp));
+	(hpTimers.at(p))->setPercentage(float(hp) / maxHp * 100);
 }
 
 void HudLayer::menuCloseCallback(Ref * pSender) {
@@ -145,3 +155,6 @@ void HudLayer::displayItemCount(int player, int itemType, int count) {
 	addChild(itemCount);
 }
 
+void HudLayer::setPropsCount(int p, int i, int c) {
+    props[p][i]->setString(std::to_string(c));
+}

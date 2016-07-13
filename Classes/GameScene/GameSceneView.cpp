@@ -55,11 +55,11 @@ void GameSceneView::addPlayer(int index, int x, int y, const char * filename) {
 }
 
 void GameSceneView::setHP(int p, int hp, int maxHp) {
-    objectsLayer->setHP(p, hp, maxHp);
+    hudLayer->setHP(p, hp, maxHp);
 }
 
 void GameSceneView::setPropsCount(int p, int i, int c) {
-    objectsLayer->setPropsCount(p, i, c);
+    hudLayer->setPropsCount(p, i, c);
 }
 
 void GameSceneView::setPlayerVelocity(int p, Vec2 v) {

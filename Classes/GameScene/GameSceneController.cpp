@@ -67,7 +67,13 @@ void GameSceneController::onExit() {
 }
 
 void GameSceneController::update(float delta) {
+    if (model->getStatus() != GameSceneModel::Status::running) return;
     view->updatePlayerZ();
+    for (int i = 0; i < 2; ++i) {
+        view->setHP(i, model->players.at(i)->getHp(), model->players.at(i)->MAX_HP);
+        view->setPropsCount(i, 0, model->players.at(i)->items[KEY_MEDICINE]);
+        view->setPropsCount(i, 1, model->players.at(i)->items[KEY_SHIELD]);
+    }
     if (model->players.at(0)->getHp() <= 0) {
         gameEnd(0);
     } else if (model->players.at(1)->getHp() <= 0) {
@@ -199,10 +205,10 @@ void GameSceneController::gameReady() {
     // Load hud
     view->setHP(0, model->players.at(0)->getHp(), model->players.at(0)->MAX_HP);
     view->setHP(1, model->players.at(1)->getHp(), model->players.at(1)->MAX_HP);
-    view->setPropsCount(0, 0, 0);
-    view->setPropsCount(0, 1, 0);
-    view->setPropsCount(1, 0, 0);
-    view->setPropsCount(1, 1, 0);
+    //view->setPropsCount(0, 0, 0);
+    //view->setPropsCount(0, 1, 0);
+    //view->setPropsCount(1, 0, 0);
+    //view->setPropsCount(1, 1, 0);
 
     // Start countdown
     model->setTime(3);
@@ -463,11 +469,9 @@ void GameSceneController::playerGetProps(int p, Node * pr) {
     auto props = ((ItemBlockModel *)model->getMap(g.x, g.y))->getItem();
     if (props->getKey().compare(KEY_MEDICINE) == 0) {
         ++model->players.at(p)->items[KEY_MEDICINE];
-        view->setPropsCount(p, 0, model->players.at(p)->items[KEY_MEDICINE]);
     } else if (props->getKey().compare(KEY_SHIELD) == 0) {
         ++model->players.at(p)->items[KEY_SHIELD];
-        view->setPropsCount(p, 0, model->players.at(p)->items[KEY_SHIELD]);
-    } if (props->getKey().compare(KEY_BALLOON) == 0) {
+    } else if (props->getKey().compare(KEY_BALLOON) == 0) {
         ++model->players.at(p)->items[KEY_BUBBLE];
     } else {
         props->applyToPlayer(model->players.at(p), false);

@@ -14,6 +14,7 @@ public:
 	void displayItemCount(int player, int itemType, int count);
 	void menuCloseCallback(Ref *pSender);
 	void setHP(int p, int hp, int maxHp);
+    void setPropsCount(int p, int i, int c);
 private:
 	//Sprite *backgroundImage;
 
@@ -40,6 +41,7 @@ private:
 	Sprite *avatar2;
 
 	Label *warningMessage;
+    Label *props[2][2];
 
 	Vec2 layerAnchor;
 	Vec2 backgroundPos;

@@ -18,8 +18,7 @@ public:
 	void useMap(const char * filename);
 	void addPlayer(int index, int x, int y, const char * filename);
 	//void setAvatar(int p, const char * filename);
-	void setHP(int p, int hp, int maxHp);
-	void setPropsCount(int p, int i, int c);
+	//void setHP(int p, int hp, int maxHp);
 	void setPlayerVelocity(int p, Vec2 v);
 	void notifyReady(const char * text, float time = 1);
 	void setGridPosition(Node *dest , int x, int y);
